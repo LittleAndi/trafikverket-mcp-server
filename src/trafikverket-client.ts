@@ -6,6 +6,8 @@ export const API_KEY_ENV = 'TRAFIKVERKET_API_KEY';
 const REQUEST_TIMEOUT_MS = 20_000;
 
 export interface QuerySpec {
+  /** Namespace the object type lives in, e.g. "Rail.TrafficInfo". Required for newer object types. */
+  namespace?: string;
   /** Object type, e.g. "TrainAnnouncement". */
   objectType: string;
   /** Schema version for that object type, e.g. "1.9". */
@@ -14,7 +16,7 @@ export interface QuerySpec {
   filter?: string;
   /** Restrict the response to these fields (<INCLUDE>); omit to get every field. */
   include?: string[];
-  /** Sort order, e.g. "AdvertisedTimeAtLocation" or "LastUpdateDateTime desc". */
+  /** Sort order, e.g. "AdvertisedTimeAtLocation" or "ModifiedDateTime desc". */
   orderBy?: string;
   limit?: number;
 }
@@ -64,6 +66,7 @@ export const or = (...parts: Array<string | undefined>) => combine('OR', parts);
 /** Builds the full <REQUEST> document for a single query. */
 export function buildRequestXml(apiKey: string, spec: QuerySpec): string {
   const attributes = [
+    ...(spec.namespace ? [`namespace="${escapeXml(spec.namespace)}"`] : []),
     `objecttype="${escapeXml(spec.objectType)}"`,
     `schemaversion="${escapeXml(spec.schemaVersion)}"`,
   ];

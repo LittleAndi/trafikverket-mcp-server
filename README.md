@@ -124,15 +124,15 @@ Returns per train: train number, operator, product, origin and destination names
 
 ### get_train_messages
 
-Current railway traffic messages.
+Current railway traffic messages (Trafikverket operative events): track work, faults and other disruptions.
 
 | Parameter  | Type            | Required | Default | Description                                              |
 |------------|-----------------|----------|---------|----------------------------------------------------------|
 | county     | string / number | No       | -       | County name (e.g. `"Skåne"`) or code (e.g. `12`)         |
-| activeOnly | boolean         | No       | true    | Skip messages that have already ended                    |
+| activeOnly | boolean         | No       | true    | Only ongoing events                                      |
 | limit      | number          | No       | 20      | 1-100                                                    |
 
-Returns header, description, start/end/expected end, reasons and affected stations.
+Returns event type, header, description (when a public message has been published), start/end/expected end, and the affected stations and sections.
 
 ### get_road_situations
 

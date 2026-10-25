@@ -85,8 +85,9 @@ export async function getRoadSituationsTool(input: GetRoadSituationsInput) {
   const radiusMeters = input.radiusKm * 1000;
 
   const raw = await queryTrafikinfo<RawSituation>({
+    namespace: 'Road.TrafficInfo',
     objectType: 'Situation',
-    schemaVersion: '1.5',
+    schemaVersion: '1.6',
     filter: and(
       county !== undefined ? eq('Deviation.CountyNo', county) : undefined,
       input.messageType ? eq('Deviation.MessageType', input.messageType) : undefined,

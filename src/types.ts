@@ -2,8 +2,8 @@
  * Raw shapes returned by the Trafikinfo API (JSON, v2 endpoint).
  * Every field is optional: the API omits fields that have no value.
  *
- * Field names follow Trafikverket's published XSD schemas (TrainAnnouncement 1.9, TrainMessage 1.7,
- * TrainStation 1.4, Situation 1.5, WeatherObservation 2).
+ * Field names follow Trafikverket's published XSD schemas (TrainAnnouncement 2.0, OperativeEvent 1.0,
+ * TrainStation 1.5, Situation 1.6, WeatherObservation 2.1).
  */
 
 export interface RawGeometry {
@@ -57,23 +57,31 @@ export interface RawTrainAnnouncement {
   TypeOfTraffic?: RawCodeDescription[];
 }
 
-export interface RawTrainMessage {
-  EventId?: string;
-  Header?: string;
-  ExternalDescription?: string;
+export interface RawEventLocation {
+  Signature?: string;
+  LocationIncluded?: boolean;
+}
+
+export interface RawOperativeEvent {
+  OperativeEventId?: string;
+  CountyNo?: number[];
+  EventType?: { Description?: string; EventTypeCode?: string };
+  /** 1 = ongoing, 0 = ended. */
+  EventState?: number;
   StartDateTime?: string;
   EndDateTime?: string;
-  LastUpdateDateTime?: string;
-  PrognosticatedEndDateTimeTrafficImpact?: string;
-  CountyNo?: number[];
-  ReasonCode?: RawCodeDescription[];
+  ModifiedDateTime?: string;
+  EventSection?: Array<{ FromLocation?: RawEventLocation; ToLocation?: RawEventLocation; ViaLocation?: RawEventLocation }>;
   TrafficImpact?: Array<{
-    AffectedLocation?: Array<{ LocationSignature?: string; ShouldBeTrafficInformed?: boolean }>;
-    FromLocation?: string[];
-    ToLocation?: string[];
-    IsConfirmed?: boolean;
+    Id?: string;
+    StartDateTime?: string;
+    EndDateTime?: string;
+    ModifiedDateTime?: string;
+    PublicMessage?: { Header?: string; Description?: string; StartDateTime?: string; EndDateTime?: string; ModifiedDateTime?: string };
+    SelectedSection?: Array<{
+      SectionLocation?: Array<{ Signature?: string; Affected?: boolean; LocationOrder?: number }>;
+    }>;
   }>;
-  Geometry?: RawGeometry;
 }
 
 export interface RawDeviation {
@@ -168,14 +176,15 @@ export interface TrainAnnouncement {
 
 export interface TrainMessage {
   eventId?: string;
+  eventType?: string;
   header?: string;
   description?: string;
+  active: boolean;
   startTime?: string;
   endTime?: string;
   expectedEndTime?: string;
   lastUpdated?: string;
   counties: number[];
-  reasons: string[];
   affectedLocations: string[];
   fromLocations: string[];
   toLocations: string[];

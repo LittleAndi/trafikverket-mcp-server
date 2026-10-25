@@ -1,0 +1,1169 @@
+[
+  {
+    "OperativeEventId": "O261025-040",
+    "CountyNo": [
+      14
+    ],
+    "EventType": {
+      "Description": "Dragfordon/motorvagn",
+      "EventTypeCode": "34"
+    },
+    "StartDateTime": "2026-10-25T17:34:26.120+01:00",
+    "EventState": 1,
+    "EventTrafficType": 0,
+    "Geometry": {
+      "SWEREF99TM": "POINT (6434041.5 384093.5)",
+      "WGS84": "POINT (58.032754279468094 13.03712996111264)"
+    },
+    "ModifiedDateTime": "2026-10-25T17:47:00.457+01:00",
+    "EventSection": [
+      {
+        "FromLocation": {
+          "Signature": "Hrc",
+          "CountryCode": "SE",
+          "LocationPrimaryCode": "1476",
+          "LocationIncluded": false
+        },
+        "ToLocation": {
+          "Signature": "Lju",
+          "CountryCode": "SE",
+          "LocationPrimaryCode": "2432",
+          "LocationIncluded": false
+        }
+      }
+    ],
+    "RelatedEvent": [
+      {
+        "EventId": "5688239",
+        "EventTrafficType": 0
+      }
+    ],
+    "Version": 7735659,
+    "Deleted": false,
+    "TrafficImpact": [
+      {
+        "Id": "TRI_1c6010e5_ccb3_456a_9823_1e81b012e4ba",
+        "StartDateTime": "2026-10-25T17:41:18.000+01:00",
+        "EndDateTime": "2026-10-25T19:00:00.000+01:00",
+        "ForecastType": "TRAFIKPÅVERKAN",
+        "SelectedSection": [
+          {
+            "OperatingLevel": 4,
+            "SectionLocation": [
+              {
+                "Signature": "Hrc",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1476",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 1
+              },
+              {
+                "Signature": "Lju",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "2432",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 2
+              }
+            ],
+            "FromLocation": {
+              "Signature": "Hrc",
+              "CountryCode": "SE",
+              "LocationPrimaryCode": "1476",
+              "LocationIncluded": false
+            },
+            "ToLocation": {
+              "Signature": "Lju",
+              "CountryCode": "SE",
+              "LocationPrimaryCode": "2432",
+              "LocationIncluded": false
+            }
+          },
+          {
+            "OperatingLevel": 1,
+            "SectionLocation": [
+              {
+                "Signature": "Bsc",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "431",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 3
+              },
+              {
+                "Signature": "Knl",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "2064",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 4
+              },
+              {
+                "Signature": "Nosk",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "10382",
+                "Affected": false,
+                "PossibleTravelerExchange": false,
+                "LocationOrder": 5
+              },
+              {
+                "Signature": "Fra",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "968",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 6
+              },
+              {
+                "Signature": "Boa",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "426",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 7
+              },
+              {
+                "Signature": "Moy",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "2717",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 8
+              },
+              {
+                "Signature": "Top",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4162",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 9
+              },
+              {
+                "Signature": "Lju",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "2432",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 10
+              },
+              {
+                "Signature": "Hrc",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1476",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 11
+              },
+              {
+                "Signature": "Ved",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4461",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 12
+              },
+              {
+                "Signature": "Vaa",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4428",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 13
+              },
+              {
+                "Signature": "Håp",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1631",
+                "Affected": false,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 14
+              },
+              {
+                "Signature": "Gop",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1198",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 15
+              },
+              {
+                "Signature": "Vag",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4433",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 16
+              },
+              {
+                "Signature": "Vg",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4590",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 17
+              },
+              {
+                "Signature": "Öx",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4994",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 18
+              },
+              {
+                "Signature": "Ryr",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "10435",
+                "Affected": false,
+                "PossibleTravelerExchange": false,
+                "LocationOrder": 19
+              },
+              {
+                "Signature": "Uv",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4314",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 20
+              }
+            ],
+            "FromLocation": {
+              "Signature": "Bsc",
+              "CountryCode": "SE",
+              "LocationPrimaryCode": "431",
+              "LocationIncluded": true
+            },
+            "ToLocation": {
+              "Signature": "Uv",
+              "CountryCode": "SE",
+              "LocationPrimaryCode": "4314",
+              "LocationIncluded": true
+            },
+            "ViaLocation": {
+              "Signature": "Hrc",
+              "CountryCode": "SE",
+              "LocationPrimaryCode": "1476",
+              "LocationIncluded": true
+            }
+          }
+        ],
+        "Version": 7735622,
+        "ModifiedDateTime": "2026-10-25T17:42:19.244+01:00"
+      }
+    ],
+    "ModifiedTime": "2026-10-25T16:47:01.686Z"
+  },
+  {
+    "OperativeEventId": "O261025-004",
+    "CountyNo": [
+      13,
+      14
+    ],
+    "EventType": {
+      "Description": "Kontaktledning",
+      "EventTypeCode": "22"
+    },
+    "StartDateTime": "2026-10-25T07:05:00.000+01:00",
+    "EventState": 1,
+    "EventTrafficType": 0,
+    "Geometry": {
+      "SWEREF99TM": "POINT (6366370 355107)",
+      "WGS84": "POINT (57.41649262674987 12.590308752374316)"
+    },
+    "ModifiedDateTime": "2026-10-25T17:07:54.873+01:00",
+    "EventSection": [
+      {
+        "FromLocation": {
+          "Signature": "Bsc",
+          "CountryCode": "SE",
+          "LocationPrimaryCode": "431",
+          "LocationIncluded": false
+        },
+        "ToLocation": {
+          "Signature": "Vbc",
+          "CountryCode": "SE",
+          "LocationPrimaryCode": "4429",
+          "LocationIncluded": false
+        }
+      }
+    ],
+    "RelatedEvent": [
+      {
+        "EventId": "5687748",
+        "EventTrafficType": 0
+      }
+    ],
+    "Version": 7735402,
+    "Deleted": false,
+    "TrafficImpact": [
+      {
+        "Id": "TRI_2bed97f0_044e_4714_8f18_7f243ade1ce8",
+        "StartDateTime": "2026-10-25T07:30:21.827+01:00",
+        "EndDateTime": "2026-10-25T10:00:00.000+01:00",
+        "ForecastType": "TRAFIKPÅVERKAN",
+        "PublicMessage": {
+          "Header": "Elfel: Borås-Varberg",
+          "Description": "Stopp i tågtrafiken mellan Borås och Varberg sedan kl. 07:00 på grund av elfel. Vi återkommer så snart som möjligt med mer information.\n",
+          "StartDateTime": "2026-10-25T07:30:21.827+01:00",
+          "EndDateTime": "2026-10-25T10:00:00.000+01:00",
+          "ModifiedDateTime": "2026-10-25T08:30:36.321+01:00"
+        },
+        "SelectedSection": [
+          {
+            "OperatingLevel": 1,
+            "SectionLocation": [
+              {
+                "Signature": "Uv",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4314",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 1
+              },
+              {
+                "Signature": "Ryr",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "10435",
+                "Affected": false,
+                "PossibleTravelerExchange": false,
+                "LocationOrder": 2
+              },
+              {
+                "Signature": "Öx",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4994",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 3
+              },
+              {
+                "Signature": "Vg",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4590",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 4
+              },
+              {
+                "Signature": "Vag",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4433",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 5
+              },
+              {
+                "Signature": "Gop",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1198",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 6
+              },
+              {
+                "Signature": "Håp",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1631",
+                "Affected": false,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 7
+              },
+              {
+                "Signature": "Vaa",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4428",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 8
+              },
+              {
+                "Signature": "Ved",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4461",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 9
+              },
+              {
+                "Signature": "Hrc",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1476",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 10
+              },
+              {
+                "Signature": "Lju",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "2432",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 11
+              },
+              {
+                "Signature": "Top",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4162",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 12
+              },
+              {
+                "Signature": "Moy",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "2717",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 13
+              },
+              {
+                "Signature": "Boa",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "426",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 14
+              },
+              {
+                "Signature": "Fra",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "968",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 15
+              },
+              {
+                "Signature": "Nosk",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "10382",
+                "Affected": false,
+                "PossibleTravelerExchange": false,
+                "LocationOrder": 16
+              },
+              {
+                "Signature": "Knl",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "2064",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 17
+              },
+              {
+                "Signature": "Bsc",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "431",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 18
+              },
+              {
+                "Signature": "Vfo",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4540",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 19
+              },
+              {
+                "Signature": "Frl",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "970",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 20
+              },
+              {
+                "Signature": "Kin",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1997",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 21
+              },
+              {
+                "Signature": "Asb",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "205",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 22
+              },
+              {
+                "Signature": "See",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "3512",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 23
+              },
+              {
+                "Signature": "Bgm",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "263",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 24
+              },
+              {
+                "Signature": "Bjo",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "323",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 25
+              },
+              {
+                "Signature": "Hre",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1558",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 26
+              },
+              {
+                "Signature": "Jäy",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1864",
+                "Affected": false,
+                "PossibleTravelerExchange": false,
+                "LocationOrder": 27
+              },
+              {
+                "Signature": "Vdi",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4458",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 28
+              },
+              {
+                "Signature": "Dre",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "675",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 29
+              },
+              {
+                "Signature": "Tof",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4121",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 30
+              },
+              {
+                "Signature": "Vbgb",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "10718",
+                "Affected": false,
+                "PossibleTravelerExchange": false,
+                "LocationOrder": 31
+              },
+              {
+                "Signature": "Vbc",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4429",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 32
+              }
+            ],
+            "FromLocation": {
+              "Signature": "Uv",
+              "CountryCode": "SE",
+              "LocationPrimaryCode": "4314",
+              "LocationIncluded": true
+            },
+            "ToLocation": {
+              "Signature": "Vbc",
+              "CountryCode": "SE",
+              "LocationPrimaryCode": "4429",
+              "LocationIncluded": true
+            },
+            "ViaLocation": {
+              "Signature": "Bsc",
+              "CountryCode": "SE",
+              "LocationPrimaryCode": "431",
+              "LocationIncluded": true
+            }
+          },
+          {
+            "OperatingLevel": 4,
+            "SectionLocation": [
+              {
+                "Signature": "Bsc",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "431",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 33
+              },
+              {
+                "Signature": "Vfo",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4540",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 34
+              },
+              {
+                "Signature": "Frl",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "970",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 35
+              },
+              {
+                "Signature": "Kin",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1997",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 36
+              },
+              {
+                "Signature": "Asb",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "205",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 37
+              },
+              {
+                "Signature": "See",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "3512",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 38
+              },
+              {
+                "Signature": "Bgm",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "263",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 39
+              },
+              {
+                "Signature": "Bjo",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "323",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 40
+              },
+              {
+                "Signature": "Hre",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1558",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 41
+              },
+              {
+                "Signature": "Jäy",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1864",
+                "Affected": false,
+                "PossibleTravelerExchange": false,
+                "LocationOrder": 42
+              },
+              {
+                "Signature": "Vdi",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4458",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 43
+              },
+              {
+                "Signature": "Dre",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "675",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 44
+              },
+              {
+                "Signature": "Tof",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4121",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 45
+              },
+              {
+                "Signature": "Vbgb",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "10718",
+                "Affected": false,
+                "PossibleTravelerExchange": false,
+                "LocationOrder": 46
+              },
+              {
+                "Signature": "Vbc",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4429",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 47
+              }
+            ],
+            "FromLocation": {
+              "Signature": "Bsc",
+              "CountryCode": "SE",
+              "LocationPrimaryCode": "431",
+              "LocationIncluded": false
+            },
+            "ToLocation": {
+              "Signature": "Vbc",
+              "CountryCode": "SE",
+              "LocationPrimaryCode": "4429",
+              "LocationIncluded": false
+            }
+          }
+        ],
+        "Version": 7731691,
+        "ModifiedDateTime": "2026-10-25T10:00:04.021+01:00"
+      },
+      {
+        "Id": "TRI_2b54ceec_2bcd_4503_a26a_50173c75d7af",
+        "StartDateTime": "2026-10-25T10:22:14.498+01:00",
+        "EndDateTime": "2026-10-25T20:00:00.000+01:00",
+        "ForecastType": "TRAFIKPÅVERKAN",
+        "PublicMessage": {
+          "Header": "Elfel: Borås-Varberg",
+          "Description": "Stopp i tågtrafiken mellan Borås och Varberg sedan kl. 07:00 på grund av elfel.Se respektive tågavgång för mer information om din resa.\n",
+          "StartDateTime": "2026-10-25T10:22:14.498+01:00",
+          "EndDateTime": "2026-10-25T20:00:00.000+01:00",
+          "ModifiedDateTime": "2026-10-25T16:22:22.192+01:00"
+        },
+        "SelectedSection": [
+          {
+            "OperatingLevel": 1,
+            "SectionLocation": [
+              {
+                "Signature": "Uv",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4314",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 1
+              },
+              {
+                "Signature": "Ryr",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "10435",
+                "Affected": false,
+                "PossibleTravelerExchange": false,
+                "LocationOrder": 2
+              },
+              {
+                "Signature": "Öx",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4994",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 3
+              },
+              {
+                "Signature": "Vg",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4590",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 4
+              },
+              {
+                "Signature": "Vag",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4433",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 5
+              },
+              {
+                "Signature": "Gop",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1198",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 6
+              },
+              {
+                "Signature": "Håp",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1631",
+                "Affected": false,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 7
+              },
+              {
+                "Signature": "Vaa",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4428",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 8
+              },
+              {
+                "Signature": "Ved",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4461",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 9
+              },
+              {
+                "Signature": "Hrc",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1476",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 10
+              },
+              {
+                "Signature": "Lju",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "2432",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 11
+              },
+              {
+                "Signature": "Top",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4162",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 12
+              },
+              {
+                "Signature": "Moy",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "2717",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 13
+              },
+              {
+                "Signature": "Boa",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "426",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 14
+              },
+              {
+                "Signature": "Fra",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "968",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 15
+              },
+              {
+                "Signature": "Nosk",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "10382",
+                "Affected": false,
+                "PossibleTravelerExchange": false,
+                "LocationOrder": 16
+              },
+              {
+                "Signature": "Knl",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "2064",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 17
+              },
+              {
+                "Signature": "Bsc",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "431",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 18
+              },
+              {
+                "Signature": "Vfo",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4540",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 19
+              },
+              {
+                "Signature": "Frl",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "970",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 20
+              },
+              {
+                "Signature": "Kin",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1997",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 21
+              },
+              {
+                "Signature": "Asb",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "205",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 22
+              },
+              {
+                "Signature": "See",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "3512",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 23
+              },
+              {
+                "Signature": "Bgm",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "263",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 24
+              },
+              {
+                "Signature": "Bjo",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "323",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 25
+              },
+              {
+                "Signature": "Hre",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1558",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 26
+              },
+              {
+                "Signature": "Jäy",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1864",
+                "Affected": false,
+                "PossibleTravelerExchange": false,
+                "LocationOrder": 27
+              },
+              {
+                "Signature": "Vdi",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4458",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 28
+              },
+              {
+                "Signature": "Dre",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "675",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 29
+              },
+              {
+                "Signature": "Tof",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4121",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 30
+              },
+              {
+                "Signature": "Vbgb",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "10718",
+                "Affected": false,
+                "PossibleTravelerExchange": false,
+                "LocationOrder": 31
+              },
+              {
+                "Signature": "Vbc",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4429",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 32
+              }
+            ],
+            "FromLocation": {
+              "Signature": "Uv",
+              "CountryCode": "SE",
+              "LocationPrimaryCode": "4314",
+              "LocationIncluded": true
+            },
+            "ToLocation": {
+              "Signature": "Vbc",
+              "CountryCode": "SE",
+              "LocationPrimaryCode": "4429",
+              "LocationIncluded": true
+            },
+            "ViaLocation": {
+              "Signature": "Bsc",
+              "CountryCode": "SE",
+              "LocationPrimaryCode": "431",
+              "LocationIncluded": true
+            }
+          },
+          {
+            "OperatingLevel": 4,
+            "SectionLocation": [
+              {
+                "Signature": "Bsc",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "431",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 33
+              },
+              {
+                "Signature": "Vfo",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4540",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 34
+              },
+              {
+                "Signature": "Frl",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "970",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 35
+              },
+              {
+                "Signature": "Kin",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1997",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 36
+              },
+              {
+                "Signature": "Asb",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "205",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 37
+              },
+              {
+                "Signature": "See",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "3512",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 38
+              },
+              {
+                "Signature": "Bgm",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "263",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 39
+              },
+              {
+                "Signature": "Bjo",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "323",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 40
+              },
+              {
+                "Signature": "Hre",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1558",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 41
+              },
+              {
+                "Signature": "Jäy",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "1864",
+                "Affected": false,
+                "PossibleTravelerExchange": false,
+                "LocationOrder": 42
+              },
+              {
+                "Signature": "Vdi",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4458",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 43
+              },
+              {
+                "Signature": "Dre",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "675",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 44
+              },
+              {
+                "Signature": "Tof",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4121",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 45
+              },
+              {
+                "Signature": "Vbgb",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "10718",
+                "Affected": false,
+                "PossibleTravelerExchange": false,
+                "LocationOrder": 46
+              },
+              {
+                "Signature": "Vbc",
+                "CountryCode": "SE",
+                "LocationPrimaryCode": "4429",
+                "Affected": true,
+                "PossibleTravelerExchange": true,
+                "LocationOrder": 47
+              }
+            ],
+            "FromLocation": {
+              "Signature": "Bsc",
+              "CountryCode": "SE",
+              "LocationPrimaryCode": "431",
+              "LocationIncluded": false
+            },
+            "ToLocation": {
+              "Signature": "Vbc",
+              "CountryCode": "SE",
+              "LocationPrimaryCode": "4429",
+              "LocationIncluded": false
+            }
+          }
+        ],
+        "Version": 7735151,
+        "ModifiedDateTime": "2026-10-25T16:22:24.895+01:00"
+      }
+    ],
+    "ModifiedTime": "2026-10-25T16:07:55.811Z"
+  }
+]

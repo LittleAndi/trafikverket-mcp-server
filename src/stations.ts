@@ -7,8 +7,9 @@ let stationCache: Promise<Station[]> | undefined;
 
 async function loadStations(): Promise<Station[]> {
   const raw = await queryTrafikinfo<RawStation>({
+    namespace: 'rail.infrastructure',
     objectType: 'TrainStation',
-    schemaVersion: '1.4',
+    schemaVersion: '1.5',
     filter: eq('Advertised', true),
     include: [
       'LocationSignature',

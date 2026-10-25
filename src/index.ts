@@ -111,7 +111,7 @@ server.registerTool(
   {
     description:
       `Get current railway traffic messages from Trafikverket: track work, technical faults and other ` +
-      `disruptions, with header, description, start/expected end time, reasons, and the affected ` +
+      `disruptions, with event type, header, description, start/expected end time, and the affected ` +
       `stations/sections. Optionally filter by county. Use this for "is there a disruption on the railway" ` +
       `questions; use get_train_announcements for per-train timetable and delay data. ` +
       `${ERROR_NOTE} ${COVERAGE_NOTE}`,
