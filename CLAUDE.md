@@ -26,15 +26,17 @@ CI (`.github/workflows/ci.yml`) runs on Node 20.x/22.x/24.x: `npm ci`, `npm run 
 
 **Request flow:** `src/index.ts` (MCP server, stdio transport) -> tool module in `src/tools/*.ts` (zod schema + handler) -> `src/trafikverket-client.ts` (builds the XML query, POSTs it, unwraps the JSON result) -> helpers (`stations.ts`, `counties.ts`, `geo.ts`).
 
-**The Trafikinfo API** is not REST-like: every call is a `POST` of an XML `<REQUEST>` containing `<LOGIN authenticationkey=.../>` and one `<QUERY objecttype=... schemaversion=...>` with an optional `<FILTER>` (EQ, GT, GTE, LT, LTE, WITHIN, AND, OR), `<INCLUDE>` field list, `orderby` and `limit`. The `.json` URL suffix makes the response JSON: `{ RESPONSE: { RESULT: [ { <ObjectType>: [...] } ] } }`, or `{ ERROR: { SOURCE, MESSAGE } }` inside `RESULT[0]` on failure. Fields without a value are omitted, so every raw field is optional (see `src/types.ts`). Each object type has its own schema version, kept as constants next to the query that uses it:
+**The Trafikinfo API** is not REST-like: every call is a `POST` of an XML `<REQUEST>` containing `<LOGIN authenticationkey=.../>` and one `<QUERY namespace=... objecttype=... schemaversion=...>` with an optional `<FILTER>` (EQ, GT, GTE, LT, LTE, WITHIN, AND, OR), `<INCLUDE>` field list, `orderby` and `limit`. The `.json` URL suffix makes the response JSON: `{ RESPONSE: { RESULT: [ { <ObjectType>: [...] } ] } }`, or `{ ERROR: { SOURCE, MESSAGE } }` inside `RESULT[0]` on failure. Fields without a value are omitted, so every raw field is optional (see `src/types.ts`). Each object type lives in a namespace and has its own schema versions, kept as constants next to the query that uses it. Newer object types (`Situation`, `OperativeEvent`) return "ObjectType ... does not exists" without the `namespace` attribute, so always send it. The live catalogue of object types, namespaces and versions is at `https://data.trafikverket.se/apb/prod/schema?endpoint=` (what the portal's data-model page renders), and each XSD can be downloaded (zipped) from `https://data.trafikverket.se/apb/prod/schema/<namespace>.<ObjectType>/<version>/`. Object types and versions are retired without notice (`TrainMessage` and `Situation` 1.5 are gone), so check there first when a query starts failing:
 
-| Tool | Object type | Schema version |
-|------|-------------|----------------|
-| `search_stations`, station resolution | TrainStation | 1.4 |
-| `get_train_announcements` | TrainAnnouncement | 1.9 |
-| `get_train_messages` | TrainMessage | 1.7 |
-| `get_road_situations` | Situation | 1.5 |
-| `get_road_weather` | WeatherObservation | 2 |
+| Tool | Namespace | Object type | Schema version |
+|------|-----------|-------------|----------------|
+| `search_stations`, station resolution | rail.infrastructure | TrainStation | 1.5 |
+| `get_train_announcements` | Rail.TrafficInfo | TrainAnnouncement | 2.0 |
+| `get_train_messages` | ols.open | OperativeEvent | 1.0 |
+| `get_road_situations` | Road.TrafficInfo | Situation | 1.6 |
+| `get_road_weather` | Road.WeatherInfo | WeatherObservation | 2.1 |
+
+`WeatherObservation` keeps 7 days of history, so its query must filter on `Sample`; without a time window a large radius hits the API's maximum response size (it returns an `ERROR`, which the client throws).
 
 **Adding a new tool** touches these places:
 
@@ -63,4 +65,4 @@ This depends on commit messages (or squash-merge PR titles) following [Conventio
 
 Tests mock global `fetch` through `mockTrafikinfo()` in `src/__tests__/helpers.ts`, which answers each query from a fixture chosen by the `objecttype` in the request body and records the request bodies so tests can assert on the generated XML. Fixtures live in `src/__tests__/fixtures/`. Always call `resetStationCache()` in `beforeEach`/`afterEach` for tests that touch stations, and stub `TRAFIKVERKET_API_KEY` with `vi.stubEnv`.
 
-**Important:** the fixtures were written by hand from Trafikverket's published schemas, not captured from the live API. When you have a real API key, verify these against live responses (and update the fixtures to real captures): the `WITHIN` filter syntax and the geometry field paths (`Deviation.Geometry.Point.WGS84`, `Deviation.Geometry.Line.WGS84`, `Measurepoint.Geometry.WGS84`), the `orderby` direction syntax (`LastUpdateDateTime desc`), ISO timestamps (with `Z`) in time-window filters, and the exact shape of the `WeatherObservation` measured values.
+`operative-events.json` is a real capture from the live API. The other fixtures were written by hand from the XSD schemas. All query shapes have been verified against the live API: namespaces, the `WITHIN` syntax and geometry paths (`Deviation.Geometry.Point.WGS84`, `Deviation.Geometry.Line.WGS84`, `Measurepoint.Geometry.WGS84`), `orderby` with `desc`, ISO timestamps with `Z` in time-window filters, and the `WeatherObservation` measured-value shape (`{ Origin, SensorNames, Value }`). Note that `OperativeEvent.Geometry.WGS84` is published as `POINT (lat lon)`, the reverse of every other object type, so do not feed it to `parseWgs84Point`.

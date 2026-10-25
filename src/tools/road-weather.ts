@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { distanceKm, parseWgs84Point, round1, validateCoordinates } from '../geo.js';
-import { queryTrafikinfo, within } from '../trafikverket-client.js';
+import { and, gte, queryTrafikinfo, within } from '../trafikverket-client.js';
 import type { RawWeatherObservation, RoadWeatherStation } from '../types.js';
 
 export const getRoadWeatherSchema = z.object({
@@ -20,6 +20,12 @@ export const getRoadWeatherSchema = z.object({
     .default(3)
     .describe('Number of nearest stations to return (1-20, default 3)'),
 });
+
+/**
+ * WeatherObservation keeps 7 days of history; without a time window a large radius exceeds the API's
+ * maximum response size. Stations report every few minutes, so this window still covers all of them.
+ */
+const OBSERVATION_WINDOW_MS = 2 * 60 * 60 * 1000;
 
 export type GetRoadWeatherInput = z.infer<typeof getRoadWeatherSchema>;
 
@@ -72,9 +78,14 @@ export async function getRoadWeatherTool(input: GetRoadWeatherInput) {
   const origin = { latitude: input.latitude, longitude: input.longitude };
 
   const raw = await queryTrafikinfo<RawWeatherObservation>({
+    namespace: 'Road.WeatherInfo',
     objectType: 'WeatherObservation',
-    schemaVersion: '2',
-    filter: within('Measurepoint.Geometry.WGS84', origin.longitude, origin.latitude, input.radiusKm * 1000),
+    schemaVersion: '2.1',
+    filter: and(
+      within('Measurepoint.Geometry.WGS84', origin.longitude, origin.latitude, input.radiusKm * 1000),
+      gte('Sample', new Date(Date.now() - OBSERVATION_WINDOW_MS).toISOString())
+    ),
+    orderBy: 'Sample desc',
   });
 
   // Keep only the newest observation per measurepoint, then take the nearest stations.

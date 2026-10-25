@@ -15,7 +15,7 @@ import {
 import { mockTrafikinfo } from './helpers.js';
 import stationsFixture from './fixtures/stations.json';
 import announcementsFixture from './fixtures/train-announcements.json';
-import messagesFixture from './fixtures/train-messages.json';
+import operativeEventsFixture from './fixtures/operative-events.json';
 import situationsFixture from './fixtures/situations.json';
 import weatherFixture from './fixtures/weather-observations.json';
 
@@ -62,7 +62,8 @@ describe('getTrainAnnouncementsTool', () => {
     );
 
     const request = requests.find((r) => r.includes('objecttype="TrainAnnouncement"')) as string;
-    expect(request).toContain('schemaversion="1.9"');
+    expect(request).toContain('namespace="Rail.TrafficInfo"');
+    expect(request).toContain('schemaversion="2.0"');
     expect(request).toContain('<EQ name="LocationSignature" value="Cst" />');
     expect(request).toContain('<EQ name="ActivityType" value="Avgang" />');
     expect(request).toContain('<GTE name="AdvertisedTimeAtLocation"');
@@ -112,34 +113,63 @@ describe('getTrainAnnouncementsTool', () => {
 });
 
 describe('getTrainMessagesTool', () => {
-  it('filters by county and drops messages that have already ended', async () => {
-    const requests = mockTrafikinfo({ TrainStation: stationsFixture, TrainMessage: messagesFixture });
+  // Real capture of two Västra Götaland events; only Borås C and Varberg are known stations here.
+  const stations = [
+    ...stationsFixture,
+    { LocationSignature: 'Bsc', AdvertisedLocationName: 'Borås C', CountyNo: [14], Advertised: true },
+    { LocationSignature: 'Vbc', AdvertisedLocationName: 'Varberg', CountyNo: [13], Advertised: true },
+  ];
 
-    const result = await getTrainMessagesTool(getTrainMessagesSchema.parse({ county: 'Skåne' }));
+  it('queries ongoing operative events for the county and shapes the output', async () => {
+    const requests = mockTrafikinfo({ TrainStation: stations, OperativeEvent: operativeEventsFixture });
 
-    const request = requests.find((r) => r.includes('objecttype="TrainMessage"')) as string;
-    expect(request).toContain('schemaversion="1.7"');
-    expect(request).toContain('<EQ name="CountyNo" value="12" />');
-    expect(request).toContain('orderby="LastUpdateDateTime desc"');
+    const result = await getTrainMessagesTool(getTrainMessagesSchema.parse({ county: 'Västra Götaland' }));
 
-    expect(result.county).toBe(12);
-    expect(result.count).toBe(1);
-    expect(result.messages[0]).toMatchObject({
-      eventId: 'SE_STA_TRI_1',
-      header: 'Banarbete mellan Hässleholm och Lund',
-      reasons: ['Banarbete'],
-      affectedLocations: ['Hässleholm C', 'Lund C'],
-      fromLocations: ['Hässleholm C'],
-      toLocations: ['Lund C'],
+    const request = requests.find((r) => r.includes('objecttype="OperativeEvent"')) as string;
+    expect(request).toContain('namespace="ols.open"');
+    expect(request).toContain('schemaversion="1.0"');
+    expect(request).toContain('<AND><EQ name="CountyNo" value="14" /><EQ name="EventState" value="1" /></AND>');
+    expect(request).toContain('orderby="ModifiedDateTime desc"');
+
+    expect(result.county).toBe(14);
+    expect(result.count).toBe(2);
+    const message = result.messages.find((m) => m.eventId === 'O261025-004');
+    expect(message).toMatchObject({
+      eventType: 'Kontaktledning',
+      header: 'Elfel: Borås-Varberg',
+      active: true,
+      expectedEndTime: '2026-10-25T20:00:00.000+01:00',
+      lastUpdated: expect.any(String),
+      counties: [13, 14],
+      fromLocations: ['Borås C'],
+      toLocations: ['Varberg'],
+    });
+    // The most recently modified public message wins, with trailing whitespace trimmed.
+    expect(message?.description).toMatch(/Se respektive tågavgång för mer information om din resa.$/);
+    expect(message?.affectedLocations).toContain('Borås C');
+    expect(new Set(message?.affectedLocations).size).toBe(message?.affectedLocations.length);
+  });
+
+  it('keeps events that have no public message yet', async () => {
+    mockTrafikinfo({ TrainStation: stations, OperativeEvent: operativeEventsFixture });
+
+    const result = await getTrainMessagesTool(getTrainMessagesSchema.parse({}));
+
+    expect(result.messages.find((m) => m.eventId === 'O261025-040')).toMatchObject({
+      eventType: 'Dragfordon/motorvagn',
+      header: undefined,
+      fromLocations: ['Hrc'],
+      toLocations: ['Lju'],
     });
   });
 
-  it('includes ended messages when activeOnly is false', async () => {
-    mockTrafikinfo({ TrainStation: stationsFixture, TrainMessage: messagesFixture });
+  it('does not filter on event state when activeOnly is false', async () => {
+    const requests = mockTrafikinfo({ TrainStation: stations, OperativeEvent: operativeEventsFixture });
 
-    const result = await getTrainMessagesTool(getTrainMessagesSchema.parse({ activeOnly: false }));
+    await getTrainMessagesTool(getTrainMessagesSchema.parse({ activeOnly: false }));
 
-    expect(result.count).toBe(2);
+    const request = requests.find((r) => r.includes('objecttype="OperativeEvent"')) as string;
+    expect(request).not.toContain('<FILTER>');
   });
 
   it('still works when station names cannot be loaded', async () => {
@@ -148,7 +178,7 @@ describe('getTrainMessagesTool', () => {
       vi.fn(async (_url: unknown, init?: { body?: unknown }) => {
         const body = String(init?.body);
         if (body.includes('objecttype="TrainStation"')) throw new Error('offline');
-        return new Response(JSON.stringify({ RESPONSE: { RESULT: [{ TrainMessage: messagesFixture }] } }), {
+        return new Response(JSON.stringify({ RESPONSE: { RESULT: [{ OperativeEvent: operativeEventsFixture }] } }), {
           status: 200,
         });
       })
@@ -156,7 +186,7 @@ describe('getTrainMessagesTool', () => {
 
     const result = await getTrainMessagesTool(getTrainMessagesSchema.parse({}));
 
-    expect(result.messages[0].affectedLocations).toEqual(['Hb', 'Lu']);
+    expect(result.messages.find((m) => m.eventId === 'O261025-004')?.fromLocations).toEqual(['Bsc']);
   });
 
   it('rejects unknown counties before calling the API', async () => {
@@ -177,7 +207,8 @@ describe('getRoadSituationsTool', () => {
     );
 
     const request = requests[0];
-    expect(request).toContain('schemaversion="1.5"');
+    expect(request).toContain('namespace="Road.TrafficInfo"');
+    expect(request).toContain('schemaversion="1.6"');
     expect(request).toContain(
       '<WITHIN name="Deviation.Geometry.Point.WGS84" shape="center" value="12 57.6" radius="30000m" />'
     );
@@ -234,7 +265,10 @@ describe('getRoadWeatherTool', () => {
     );
 
     expect(requests[0]).toContain('objecttype="WeatherObservation"');
-    expect(requests[0]).toContain('schemaversion="2"');
+    expect(requests[0]).toContain('namespace="Road.WeatherInfo"');
+    expect(requests[0]).toContain('schemaversion="2.1"');
+    expect(requests[0]).toContain('<GTE name="Sample" value="');
+    expect(requests[0]).toContain('orderby="Sample desc"');
     expect(requests[0]).toContain(
       '<WITHIN name="Measurepoint.Geometry.WGS84" shape="center" value="12.1 57.5" radius="50000m" />'
     );

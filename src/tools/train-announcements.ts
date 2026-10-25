@@ -82,8 +82,9 @@ export async function getTrainAnnouncementsTool(input: GetTrainAnnouncementsInpu
   const to = new Date(now + input.hoursAhead * 3_600_000);
 
   const raw = await queryTrafikinfo<RawTrainAnnouncement>({
+    namespace: 'Rail.TrafficInfo',
     objectType: 'TrainAnnouncement',
-    schemaVersion: '1.9',
+    schemaVersion: '2.0',
     filter: and(
       eq('LocationSignature', station.signature),
       eq('ActivityType', ACTIVITY[input.direction]),

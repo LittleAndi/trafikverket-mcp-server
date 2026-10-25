@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { resolveCounty } from '../counties.js';
 import { stationNameMap } from '../stations.js';
-import { eq, queryTrafikinfo } from '../trafikverket-client.js';
-import type { RawTrainMessage, TrainMessage } from '../types.js';
+import { and, eq, queryTrafikinfo } from '../trafikverket-client.js';
+import type { RawOperativeEvent, TrainMessage } from '../types.js';
 
 export const getTrainMessagesSchema = z.object({
   county: z
@@ -22,49 +22,68 @@ function unique<T>(items: T[]): T[] {
   return [...new Set(items)];
 }
 
-export function toTrainMessage(raw: RawTrainMessage, names: Map<string, string>): TrainMessage {
+/** Latest of a list of ISO timestamps, or undefined if there are none. */
+function latest(times: Array<string | undefined>): string | undefined {
+  return times
+    .filter((t): t is string => Boolean(t))
+    .reduce<string | undefined>((max, t) => (!max || Date.parse(t) > Date.parse(max) ? t : max), undefined);
+}
+
+export function toTrainMessage(raw: RawOperativeEvent, names: Map<string, string>): TrainMessage {
   const impact = raw.TrafficImpact ?? [];
+  const sections = raw.EventSection ?? [];
   const resolve = (signature: string) => names.get(signature) ?? signature;
+  const signatures = (values: Array<string | undefined>) =>
+    unique(values.filter((s): s is string => Boolean(s)).map(resolve));
+
+  // An event can carry several public messages over its lifetime; the most recently modified one is current.
+  const messages = impact.map((i) => i.PublicMessage).filter((m) => m !== undefined);
+  const current = messages.find((m) => m.ModifiedDateTime === latest(messages.map((x) => x.ModifiedDateTime))) ?? messages[0];
 
   return {
-    eventId: raw.EventId,
-    header: raw.Header,
-    description: raw.ExternalDescription,
+    eventId: raw.OperativeEventId,
+    eventType: raw.EventType?.Description,
+    header: current?.Header,
+    description: current?.Description?.trim(),
+    active: raw.EventState === 1,
     startTime: raw.StartDateTime,
     endTime: raw.EndDateTime,
-    expectedEndTime: raw.PrognosticatedEndDateTimeTrafficImpact,
-    lastUpdated: raw.LastUpdateDateTime,
+    expectedEndTime: latest(impact.map((i) => i.EndDateTime)),
+    lastUpdated: raw.ModifiedDateTime,
     counties: raw.CountyNo ?? [],
-    reasons: (raw.ReasonCode ?? []).map((r) => r.Description ?? r.Code).filter((d): d is string => Boolean(d)),
-    affectedLocations: unique(
-      impact.flatMap((i) => (i.AffectedLocation ?? []).map((l) => l.LocationSignature)).filter((s): s is string => Boolean(s)).map(resolve)
+    affectedLocations: signatures(
+      impact.flatMap((i) =>
+        (i.SelectedSection ?? []).flatMap((section) =>
+          (section.SectionLocation ?? []).filter((l) => l.Affected).map((l) => l.Signature)
+        )
+      )
     ),
-    fromLocations: unique(impact.flatMap((i) => i.FromLocation ?? []).map(resolve)),
-    toLocations: unique(impact.flatMap((i) => i.ToLocation ?? []).map(resolve)),
+    fromLocations: signatures(sections.map((section) => section.FromLocation?.Signature)),
+    toLocations: signatures(sections.map((section) => section.ToLocation?.Signature)),
   };
 }
 
 export async function getTrainMessagesTool(input: GetTrainMessagesInput) {
   const county = input.county !== undefined ? resolveCounty(input.county) : undefined;
 
-  const raw = await queryTrafikinfo<RawTrainMessage>({
-    objectType: 'TrainMessage',
-    schemaVersion: '1.7',
-    filter: county !== undefined ? eq('CountyNo', county) : undefined,
-    orderBy: 'LastUpdateDateTime desc',
+  // TrainMessage was retired; railway disruptions and track work are published as OperativeEvent.
+  const raw = await queryTrafikinfo<RawOperativeEvent>({
+    namespace: 'ols.open',
+    objectType: 'OperativeEvent',
+    schemaVersion: '1.0',
+    filter: and(
+      county !== undefined ? eq('CountyNo', county) : undefined,
+      input.activeOnly ? eq('EventState', 1) : undefined
+    ),
+    orderBy: 'ModifiedDateTime desc',
     limit: input.limit,
   });
-
-  const now = Date.now();
-  const current = input.activeOnly
-    ? raw.filter((m) => !m.EndDateTime || Date.parse(m.EndDateTime) > now)
-    : raw;
 
   const names = await stationNameMap();
 
   return {
     county,
-    count: current.length,
-    messages: current.map((m) => toTrainMessage(m, names)),
+    count: raw.length,
+    messages: raw.map((m) => toTrainMessage(m, names)),
   };
 }

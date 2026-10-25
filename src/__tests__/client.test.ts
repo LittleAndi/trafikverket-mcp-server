@@ -39,10 +39,16 @@ describe('request building', () => {
     expect(xml).toContain('<INCLUDE>Geometry.WGS84</INCLUDE>');
   });
 
+  it('puts the namespace on the query when given', () => {
+    const xml = buildRequestXml('KEY', { namespace: 'ols.open', objectType: 'OperativeEvent', schemaVersion: '1.0' });
+    expect(xml).toContain('<QUERY namespace="ols.open" objecttype="OperativeEvent" schemaversion="1.0">');
+  });
+
   it('omits optional parts when not given', () => {
     const xml = buildRequestXml('KEY', { objectType: 'TrainStation', schemaVersion: '1.4' });
     expect(xml).not.toContain('<FILTER>');
     expect(xml).not.toContain('<INCLUDE>');
+    expect(xml).not.toContain('namespace=');
     expect(xml).not.toContain('limit=');
     expect(xml).not.toContain('orderby=');
   });
