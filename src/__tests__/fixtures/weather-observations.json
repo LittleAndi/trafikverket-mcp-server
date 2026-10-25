@@ -1,0 +1,31 @@
+[
+  {
+    "Id": "obs-1-old",
+    "Sample": "2026-10-25T16:40:00.000+01:00",
+    "Measurepoint": { "Id": 101, "Name": "Kungsbacka", "Geometry": { "WGS84": "POINT (12.07 57.49)" } },
+    "Air": { "Temperature": { "Value": 6.5 } }
+  },
+  {
+    "Id": "obs-1",
+    "Sample": "2026-10-25T17:00:00.000+01:00",
+    "Measurepoint": { "Id": 101, "Name": "Kungsbacka", "Geometry": { "WGS84": "POINT (12.07 57.49)" } },
+    "Air": {
+      "Temperature": { "Value": 7.1, "Origin": "Measured" },
+      "RelativeHumidity": { "Value": 88 },
+      "Dewpoint": { "Value": 5.2 },
+      "VisibleDistance": { "Value": 4500 }
+    },
+    "Wind": [{ "Direction": { "Value": 225 }, "Speed": { "Value": 6.4 } }],
+    "Surface": { "Temperature": { "Value": 6.0 }, "Grip": { "Value": 0.7 }, "Water": true, "Ice": false, "Snow": false },
+    "Aggregated10minutes": {
+      "Precipitation": { "Rain": true, "Snow": false, "TotalWaterEquivalent": { "Value": 0.4 } },
+      "Wind": { "SpeedAverage": { "Value": 6.1 }, "SpeedMax": { "Value": 9.3 } }
+    }
+  },
+  {
+    "Id": "obs-2",
+    "Sample": "2026-10-25T17:00:00.000+01:00",
+    "Measurepoint": { "Id": 202, "Name": "Hede", "Geometry": { "WGS84": "POINT (12.5 57.9)" } },
+    "Air": { "Temperature": { "Value": 5.0 } }
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "name": "trafikverket-mcp-server",
+  "version": "0.0.0",
+  "description": "MCP server for Trafikverket (Swedish Transport Administration) open traffic data: trains, road incidents and road weather",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "trafikverket-mcp-server": "dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LittleAndi/trafikverket-mcp-server.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.0.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^4.1.10",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "trafikverket",
+    "trafikinfo",
+    "sweden",
+    "trains",
+    "traffic",
+    "road-weather"
+  ]
+}

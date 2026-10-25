@@ -1,0 +1,41 @@
+[
+  {
+    "ActivityType": "Avgang",
+    "Advertised": true,
+    "AdvertisedTimeAtLocation": "2026-10-25T17:30:00.000+01:00",
+    "AdvertisedTrainIdent": "541",
+    "EstimatedTimeAtLocation": "2026-10-25T17:37:00.000+01:00",
+    "FromLocation": [{ "LocationName": "Cst", "Priority": 1, "Order": 0 }],
+    "ToLocation": [{ "LocationName": "G", "Priority": 1, "Order": 0 }],
+    "LocationSignature": "Cst",
+    "Operator": "SJ",
+    "ProductInformation": [{ "Code": "HSJ", "Description": "SJ Snabbtåg" }],
+    "TypeOfTraffic": [{ "Code": "PNA", "Description": "Persontåg" }],
+    "TrackAtLocation": "14",
+    "Deviation": [{ "Code": "ANA088", "Description": "Försenad" }]
+  },
+  {
+    "ActivityType": "Avgang",
+    "Advertised": true,
+    "AdvertisedTimeAtLocation": "2026-10-25T17:45:00.000+01:00",
+    "AdvertisedTrainIdent": "2543",
+    "Canceled": true,
+    "ToLocation": [
+      { "LocationName": "Gs", "Priority": 2, "Order": 1 },
+      { "LocationName": "Lu", "Priority": 1, "Order": 0 }
+    ],
+    "LocationSignature": "Cst",
+    "Operator": "Öresundståg",
+    "TrackAtLocation": "10",
+    "Deviation": [{ "Code": "ANA050", "Description": "Inställd" }]
+  },
+  {
+    "ActivityType": "Avgang",
+    "Advertised": true,
+    "AdvertisedTimeAtLocation": "2026-10-25T17:10:00.000+01:00",
+    "AdvertisedTrainIdent": "9077",
+    "TimeAtLocation": "2026-10-25T17:10:00.000+01:00",
+    "ToLocation": [{ "LocationName": "UNKNOWN", "Priority": 1, "Order": 0 }],
+    "LocationSignature": "Cst"
+  }
+]

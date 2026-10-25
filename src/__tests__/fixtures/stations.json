@@ -1,0 +1,54 @@
+[
+  {
+    "LocationSignature": "Cst",
+    "AdvertisedLocationName": "Stockholm C",
+    "AdvertisedShortLocationName": "Stockholm C",
+    "OfficialLocationName": "Stockholms central",
+    "CountyNo": [1],
+    "Geometry": { "WGS84": "POINT (18.0585 59.3303)" }
+  },
+  {
+    "LocationSignature": "Sod",
+    "AdvertisedLocationName": "Stockholm Södra",
+    "AdvertisedShortLocationName": "Stockholm S",
+    "CountyNo": [1],
+    "Geometry": { "WGS84": "POINT (18.0627 59.3148)" }
+  },
+  {
+    "LocationSignature": "Odn",
+    "AdvertisedLocationName": "Stockholm Odenplan",
+    "CountyNo": [1],
+    "Geometry": { "WGS84": "POINT (18.0459 59.3429)" }
+  },
+  {
+    "LocationSignature": "G",
+    "AdvertisedLocationName": "Göteborg C",
+    "AdvertisedShortLocationName": "Göteborg C",
+    "CountyNo": [14],
+    "Geometry": { "WGS84": "POINT (11.9735 57.7089)" }
+  },
+  {
+    "LocationSignature": "Gs",
+    "AdvertisedLocationName": "Göteborg Södra",
+    "CountyNo": [14],
+    "Geometry": { "WGS84": "POINT (11.9188 57.6817)" }
+  },
+  {
+    "LocationSignature": "Hb",
+    "AdvertisedLocationName": "Hässleholm C",
+    "CountyNo": [12],
+    "Geometry": { "WGS84": "POINT (13.7673 56.1595)" }
+  },
+  {
+    "LocationSignature": "Hpbg",
+    "AdvertisedLocationName": "Hässleholm Norra",
+    "CountyNo": [12],
+    "Geometry": { "WGS84": "POINT (13.7647 56.1668)" }
+  },
+  {
+    "LocationSignature": "Lu",
+    "AdvertisedLocationName": "Lund C",
+    "CountyNo": [12],
+    "Geometry": { "WGS84": "POINT (13.1862 55.7066)" }
+  }
+]

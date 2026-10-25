@@ -1,0 +1,49 @@
+[
+  {
+    "Id": "SE_STA_TRISSID_1",
+    "PublicationTime": "2026-10-25T16:00:00.000+01:00",
+    "Deviation": [
+      {
+        "Id": "SE_STA_TRISSID_1_1",
+        "Header": "Olycka",
+        "Message": "Olycka med flera fordon. Körfält avstängt.",
+        "MessageType": "Olycka",
+        "SeverityCode": 4,
+        "SeverityText": "Stor påverkan",
+        "StartTime": "2026-10-25T15:50:00.000+01:00",
+        "RoadNumber": "E6",
+        "LocationDescriptor": "E6 i höjd med Kungsbacka",
+        "CountyNo": [13],
+        "NumberOfLanesRestricted": 1,
+        "Geometry": { "Point": { "WGS84": "POINT (12.0 57.5)" } }
+      }
+    ]
+  },
+  {
+    "Id": "SE_STA_TRISSID_2",
+    "Deviation": [
+      {
+        "Id": "SE_STA_TRISSID_2_1",
+        "Header": "Vägarbete",
+        "Message": "Vägarbete, vägen smalnar av.",
+        "MessageType": "Vägarbete",
+        "SeverityCode": 2,
+        "SeverityText": "Liten påverkan",
+        "StartTime": "2026-10-20T07:00:00.000+02:00",
+        "EndTime": "2099-12-31T23:00:00.000+01:00",
+        "RoadNumber": "40",
+        "CountyNo": [14],
+        "Geometry": { "Point": { "WGS84": "POINT (12.1 57.7)" } }
+      },
+      {
+        "Id": "SE_STA_TRISSID_2_2",
+        "Header": "Avslutat vägarbete",
+        "MessageType": "Vägarbete",
+        "SeverityCode": 1,
+        "StartTime": "2026-09-01T07:00:00.000+02:00",
+        "EndTime": "2026-09-30T23:00:00.000+02:00",
+        "CountyNo": [14]
+      }
+    ]
+  }
+]
