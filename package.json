@@ -1,6 +1,6 @@
 {
   "name": "trafikverket-mcp-server",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "MCP server for Trafikverket (Swedish Transport Administration) open traffic data: trains, road incidents and road weather",
   "type": "module",
   "main": "dist/index.js",
