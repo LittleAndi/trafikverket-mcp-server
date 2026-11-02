@@ -2,7 +2,7 @@
  * Raw shapes returned by the Trafikinfo API (JSON, v2 endpoint).
  * Every field is optional: the API omits fields that have no value.
  *
- * Field names follow Trafikverket's published XSD schemas (TrainAnnouncement 2.0, OperativeEvent 1.0,
+ * Field names follow Trafikverket's published XSD schemas (TrainAnnouncement 2.0, OperativeEvent 1.0, RailwayEvent 1.0,
  * TrainStation 1.5, Situation 1.6, WeatherObservation 2.1, TrainPosition 1.1,
  * ReplacementTraffic 1.0).
  */
@@ -106,6 +106,41 @@ export interface RawOperativeEvent {
       SectionLocation?: Array<{ Signature?: string; Affected?: boolean; LocationOrder?: number }>;
     }>;
   }>;
+}
+
+export interface RawRailwayEventLocation {
+  Signature?: string;
+  CountryCode?: string;
+  LocationPrimaryCode?: string;
+  LocationIncluded?: boolean;
+}
+
+export interface RawRailwayEvent {
+  EventId?: string;
+  StartDateTime?: string;
+  EndDateTime?: string;
+  /** Reason (cause) code for the event. */
+  ReasonCode?: string;
+  /** Id of the related OperativeEvent, if the event has become one. */
+  OperativeEventId?: string;
+  /** Ingen, MöjligOperativHändelse, BedömdEjOperativHändelse or OperativHändelse. */
+  EventStatus?: string;
+  Deleted?: boolean;
+  Version?: number;
+  CreatedDateTime?: string;
+  ModifiedDateTime?: string;
+  SelectedSection?: Array<{
+    FromLocation?: RawRailwayEventLocation;
+    ToLocation?: RawRailwayEventLocation;
+    ViaLocation?: RawRailwayEventLocation;
+    IntermediateLocation?: Array<{
+      Signature?: string;
+      CountryCode?: string;
+      LocationPrimaryCode?: string;
+      LocationOrder?: number;
+    }>;
+  }>;
+  ModifiedTime?: string;
 }
 
 export interface RawDeviation {
@@ -266,6 +301,29 @@ export interface TrainMessage {
   affectedLocations: string[];
   fromLocations: string[];
   toLocations: string[];
+}
+
+export interface RailwayEventSection {
+  from?: string;
+  to?: string;
+  via?: string;
+  /** Locations between from and to, in timetable order. */
+  intermediate: string[];
+}
+
+export interface RailwayEvent {
+  eventId?: string;
+  status?: string;
+  reasonCode?: string;
+  operativeEventId?: string;
+  active: boolean;
+  startTime?: string;
+  endTime?: string;
+  createdTime?: string;
+  lastUpdated?: string;
+  version?: number;
+  sections: RailwayEventSection[];
+  locations: string[];
 }
 
 export interface RoadSituation {

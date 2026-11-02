@@ -5,6 +5,7 @@ import {
   buildRequestXml,
   eq,
   escapeXml,
+  exists,
   or,
   queryTrafikinfo,
   within,
@@ -62,6 +63,10 @@ describe('request building', () => {
     expect(and()).toBe('');
     expect(and(undefined, eq('A', 1))).toBe('<EQ name="A" value="1" />');
     expect(or(eq('A', 1), eq('B', 2))).toBe('<OR><EQ name="A" value="1" /><EQ name="B" value="2" /></OR>');
+  });
+
+  it('builds an EXISTS filter', () => {
+    expect(exists('EndDateTime', false)).toBe('<EXISTS name="EndDateTime" value="false" />');
   });
 
   it('builds a WITHIN filter with longitude first', () => {

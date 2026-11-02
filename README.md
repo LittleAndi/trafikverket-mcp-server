@@ -9,6 +9,7 @@ MCP server for [Trafikverket](https://www.trafikverket.se) (the Swedish Transpor
 - **get_train_positions** - Live GPS position, speed and bearing of a train by number, or of all trains around a point
 - **get_train_messages** - Current railway traffic messages (track work, faults, disruptions), optionally per county
 - **get_replacement_traffic** - Replacement buses and taxis for cancelled trains, with stops, boarding locations and times
+- **get_railway_events** - Railway events (faults, failures, disruptions) with reason code, status and affected sections, by station, status or related operative event
 - **get_road_situations** - Current road incidents: accidents, road works, obstacles and restrictions, by county and/or around a point
 - **get_road_weather** - Measured road weather (air and road surface temperature, wind, grip, precipitation) from the nearest roadside stations
 
@@ -109,6 +110,13 @@ Tool: get_replacement_traffic
 Input: { "trainNumber": "1043" }
 ```
 
+### Ongoing railway events around Hässleholm
+
+```
+Tool: get_railway_events
+Input: { "station": "Hässleholm C" }
+```
+
 ### Accidents within 30 km of Gothenburg
 
 ```
@@ -195,6 +203,20 @@ Replacement traffic (ersättningstrafik) reported by the train operators: the bu
 | limit       | number | No       | 20      | 1-50                                                                                 |
 
 Returns per trip: replaced trains (number, date, product), `vehicleMode` (`bus`, `coach`, `taxi`, ...), `status` (`planned`, `ordered`, `confirmed`, `running`, `finished`, `canceled`), vehicle identifier, `wheelchairAccessible`, `toilet`, origin/destination, departure/arrival time and every stop in order with stop description (where to board), coordinates, planned/expected/actual arrival and departure, `delayMinutes`, `disembarkingOnly`, traveller note and connecting stations. With `station`, the stop there is also returned as `atStation` and trips are ordered by the time at that stop.
+
+### get_railway_events
+
+Railway events (Trafikverket `RailwayEvent`): faults, failures and disruptions registered in Trafikverket's event system, including cause-coded events that never became a public traffic message. Deleted events are never returned.
+
+| Parameter        | Type    | Required | Default | Description                                                                                       |
+|------------------|---------|----------|---------|---------------------------------------------------------------------------------------------------|
+| station          | string  | No       | -       | Station name or signature; matches sections that start, end, pass via or include it              |
+| status           | string  | No       | -       | `Ingen`, `MöjligOperativHändelse`, `BedömdEjOperativHändelse` or `OperativHändelse`              |
+| operativeEventId | string  | No       | -       | Related operative event id (the `eventId` from `get_train_messages`)                             |
+| activeOnly       | boolean | No       | true    | Only events without an end time or with an end time in the future                                |
+| limit            | number  | No       | 20      | 1-100                                                                                             |
+
+Returns per event (most recently modified first): `eventId`, `status`, `reasonCode`, `operativeEventId`, `active`, start/end/created/last updated time, `version`, the affected `sections` (`from`, `via`, `to` and ordered `intermediate` stations) and a flat list of all `locations`.
 
 ### get_road_situations
 

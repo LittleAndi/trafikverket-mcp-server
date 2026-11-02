@@ -24,6 +24,8 @@ import {
   getTrainPositionsTool,
   getReplacementTrafficSchema,
   getReplacementTrafficTool,
+  getRailwayEventsSchema,
+  getRailwayEventsTool,
 } from './tools/index.js';
 
 const COVERAGE_NOTE = 'Coverage: Sweden only (Trafikverket data).';
@@ -126,6 +128,27 @@ server.registerTool(
     },
   },
   withErrorHandling(getTrainMessagesTool)
+);
+
+server.registerTool(
+  'get_railway_events',
+  {
+    description:
+      `Get railway events from Trafikverket: faults, failures and disruptions in the railway as registered ` +
+      `in Trafikverket's event system (Basun), including ones that never became a public traffic message. ` +
+      `Each event has an id, status (Swedish: "Ingen" = only cause-coded, "MöjligOperativHändelse", ` +
+      `"BedömdEjOperativHändelse", "OperativHändelse"), reason code, start/end time, the affected sections ` +
+      `(from/via/to and intermediate stations) and, when it has one, the id of the related operative event ` +
+      `(the eventId returned by get_train_messages). Filter by station (name or signature), status or ` +
+      `operative event id. Use get_train_messages for the public disruption text instead. ` +
+      `${ERROR_NOTE} ${COVERAGE_NOTE}`,
+    inputSchema: getRailwayEventsSchema,
+    annotations: {
+      title: 'Get Railway Events',
+      ...READONLY_ANNOTATIONS,
+    },
+  },
+  withErrorHandling(getRailwayEventsTool)
 );
 
 server.registerTool(

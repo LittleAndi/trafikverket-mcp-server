@@ -44,6 +44,9 @@ export const gte = (name: string, value: FilterValue) => comparison('GTE', name,
 export const lt = (name: string, value: FilterValue) => comparison('LT', name, value);
 export const lte = (name: string, value: FilterValue) => comparison('LTE', name, value);
 
+/** Matches objects where `name` has a value (`exists = true`) or is missing (`exists = false`). */
+export const exists = (name: string, present: boolean) => comparison('EXISTS', name, present);
+
 /** Matches objects whose WGS 84 point/geometry field lies within `radiusMeters` of the given point. */
 export function within(name: string, longitude: number, latitude: number, radiusMeters: number): string {
   return (

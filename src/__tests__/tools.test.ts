@@ -3,6 +3,8 @@ import { resetStationCache } from '../stations.js';
 import {
   getReplacementTrafficSchema,
   getReplacementTrafficTool,
+  getRailwayEventsSchema,
+  getRailwayEventsTool,
   getRoadSituationsSchema,
   getRoadSituationsTool,
   getRoadWeatherSchema,
@@ -24,6 +26,7 @@ import situationsFixture from './fixtures/situations.json';
 import weatherFixture from './fixtures/weather-observations.json';
 import trainPositionsFixture from './fixtures/train-positions.json';
 import replacementTrafficFixture from './fixtures/replacement-traffic.json';
+import railwayEventsFixture from './fixtures/railway-events.json';
 
 beforeEach(() => {
   vi.stubEnv('TRAFIKVERKET_API_KEY', 'test-key');
@@ -472,6 +475,89 @@ describe('getReplacementTrafficTool', () => {
 
   it('rejects malformed dates', () => {
     expect(() => getReplacementTrafficSchema.parse({ date: '2/11' })).toThrow(/YYYY-MM-DD/);
+  });
+});
+
+describe('getRailwayEventsTool', () => {
+  it('queries non-deleted, not-ended railway events and shapes the output', async () => {
+    const requests = mockTrafikinfo({ TrainStation: stationsFixture, RailwayEvent: railwayEventsFixture });
+
+    const result = await getRailwayEventsTool(getRailwayEventsSchema.parse({}));
+
+    const request = requests.find((r) => r.includes('objecttype="RailwayEvent"')) as string;
+    expect(request).toContain('namespace="ols.open"');
+    expect(request).toContain('schemaversion="1.0"');
+    expect(request).toContain('<EQ name="Deleted" value="false" />');
+    expect(request).toMatch(/<OR><EXISTS name="EndDateTime" value="false" \/><GT name="EndDateTime" value="[^"]+Z" \/><\/OR>/);
+    expect(request).toContain('orderby="ModifiedDateTime desc"');
+    expect(request).toContain('limit="20"');
+
+    expect(result.station).toBeUndefined();
+    // The ended event is dropped client-side even if the server returns it.
+    expect(result.count).toBe(2);
+    expect(result.events.map((e) => e.eventId)).toEqual(['B261102-0153', 'B261102-0161']);
+
+    expect(result.events[0]).toMatchObject({
+      status: 'OperativHändelse',
+      reasonCode: 'IBT01',
+      operativeEventId: 'O261102-012',
+      active: true,
+      startTime: '2026-11-02T06:41:00.000+01:00',
+      endTime: undefined,
+      version: 4,
+      // Intermediate locations follow LocationOrder; unknown signatures stay as signatures.
+      sections: [{ from: 'Hässleholm C', to: 'Lund C', via: undefined, intermediate: ['Hässleholm Norra', 'Hör'] }],
+      locations: ['Hässleholm C', 'Hässleholm Norra', 'Hör', 'Lund C'],
+    });
+    expect(result.events[1]).toMatchObject({
+      status: 'MöjligOperativHändelse',
+      operativeEventId: undefined,
+      sections: [{ from: 'Stockholm C', via: 'Stockholm Odenplan', to: 'Stockholm C', intermediate: [] }],
+      locations: ['Stockholm C', 'Stockholm Odenplan'],
+    });
+  });
+
+  it('filters on station, status and operative event id', async () => {
+    const requests = mockTrafikinfo({ TrainStation: stationsFixture, RailwayEvent: [] });
+
+    const result = await getRailwayEventsTool(
+      getRailwayEventsSchema.parse({
+        station: 'Hässleholm C',
+        status: 'OperativHändelse',
+        operativeEventId: 'O261102-012',
+        activeOnly: false,
+        limit: 5,
+      })
+    );
+
+    const request = requests.find((r) => r.includes('objecttype="RailwayEvent"')) as string;
+    expect(request).toContain(
+      '<OR>' +
+        '<EQ name="SelectedSection.FromLocation.Signature" value="Hb" />' +
+        '<EQ name="SelectedSection.ToLocation.Signature" value="Hb" />' +
+        '<EQ name="SelectedSection.ViaLocation.Signature" value="Hb" />' +
+        '<EQ name="SelectedSection.IntermediateLocation.Signature" value="Hb" />' +
+        '</OR>'
+    );
+    expect(request).toContain('<EQ name="EventStatus" value="OperativHändelse" />');
+    expect(request).toContain('<EQ name="OperativeEventId" value="O261102-012" />');
+    expect(request).not.toContain('EndDateTime');
+    expect(request).toContain('limit="5"');
+    expect(result.station).toEqual({ name: 'Hässleholm C', signature: 'Hb' });
+    expect(result.count).toBe(0);
+  });
+
+  it('keeps ended events when activeOnly is false', async () => {
+    mockTrafikinfo({ TrainStation: stationsFixture, RailwayEvent: railwayEventsFixture });
+
+    const result = await getRailwayEventsTool(getRailwayEventsSchema.parse({ activeOnly: false }));
+
+    expect(result.count).toBe(3);
+    expect(result.events.at(-1)).toMatchObject({ eventId: 'B261101-0870', active: false, locations: ['Göteborg C'] });
+  });
+
+  it('rejects unknown status values', () => {
+    expect(() => getRailwayEventsSchema.parse({ status: 'Okänd' })).toThrow();
   });
 });
 
