@@ -1,11 +1,12 @@
 # Trafikverket MCP Server
 
-MCP server for [Trafikverket](https://www.trafikverket.se) (the Swedish Transport Administration) open traffic data: live train departures and arrivals, railway disruptions, road incidents and measured road weather. Built on Trafikverket's open **Trafikinfo** API.
+MCP server for [Trafikverket](https://www.trafikverket.se) (the Swedish Transport Administration) open traffic data: live train departures and arrivals, live train positions, railway disruptions, road incidents and measured road weather. Built on Trafikverket's open **Trafikinfo** API.
 
 ## Features
 
 - **search_stations** - Find train stations by name or location signature
 - **get_train_announcements** - Live departures or arrivals at a station, with delays, platforms and cancellations
+- **get_train_positions** - Live GPS position, speed and bearing of a train by number, or of all trains around a point
 - **get_train_messages** - Current railway traffic messages (track work, faults, disruptions), optionally per county
 - **get_road_situations** - Current road incidents: accidents, road works, obstacles and restrictions, by county and/or around a point
 - **get_road_weather** - Measured road weather (air and road surface temperature, wind, grip, precipitation) from the nearest roadside stations
@@ -72,6 +73,20 @@ Tool: search_stations
 Input: { "query": "Hässleholm" }
 ```
 
+### Where is train 421 right now?
+
+```
+Tool: get_train_positions
+Input: { "trainNumber": "421" }
+```
+
+### Trains within 5 km of Göteborg C
+
+```
+Tool: get_train_positions
+Input: { "latitude": 57.7089, "longitude": 11.9732, "radiusKm": 5 }
+```
+
 ### Railway disruptions in Skåne
 
 ```
@@ -121,6 +136,23 @@ Live departures or arrivals at one station. Accepts a station name or a location
 | limit       | number | No       | 25           | 1-100                                                       |
 
 Returns per train: train number, operator, product, origin and destination names, track, advertised/estimated/actual time, `delayMinutes` (positive = late), `canceled`, deviation notes and other information.
+
+### get_train_positions
+
+Live GPS positions of trains. Give a train number, a point to search around, or both.
+
+| Parameter     | Type   | Required | Default | Description                                                         |
+|---------------|--------|----------|---------|---------------------------------------------------------------------|
+| trainNumber   | string | No*      | -       | Advertised or operational train number, e.g. `"421"`                |
+| latitude      | number | No*      | -       | Center of a radius search (requires longitude)                      |
+| longitude     | number | No*      | -       | Center of a radius search (requires latitude)                       |
+| radiusKm      | number | No       | 10      | 0.5-100                                                             |
+| maxAgeMinutes | number | No       | 10      | 1-60, ignore positions reported longer ago                          |
+| limit         | number | No       | 25      | 1-100                                                               |
+
+\* At least `trainNumber` or `latitude`/`longitude` is required.
+
+Returns per train (newest report only): train number, departure date, coordinates, `distanceKm` (radius searches, nearest first), `speedKmh`, `bearingDegrees` (0 = north), `active`, report `timestamp` and `ageMinutes`.
 
 ### get_train_messages
 

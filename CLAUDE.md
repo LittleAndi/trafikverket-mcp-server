@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-An MCP (Model Context Protocol) server exposing Trafikverket (Swedish Transport Administration) open traffic data as tools, built on the Trafikinfo API (`https://api.trafikinfo.trafikverket.se/v2/data.json`). It covers train departures/arrivals, railway messages, road incidents and measured road weather. A free API key is required and is read from the `TRAFIKVERKET_API_KEY` environment variable on every request.
+An MCP (Model Context Protocol) server exposing Trafikverket (Swedish Transport Administration) open traffic data as tools, built on the Trafikinfo API (`https://api.trafikinfo.trafikverket.se/v2/data.json`). It covers train departures/arrivals, live train positions, railway messages, road incidents and measured road weather. A free API key is required and is read from the `TRAFIKVERKET_API_KEY` environment variable on every request.
 
 ## Commands
 
@@ -33,6 +33,7 @@ CI (`.github/workflows/ci.yml`) runs on Node 20.x/22.x/24.x: `npm ci`, `npm run 
 | `search_stations`, station resolution | rail.infrastructure | TrainStation | 1.5 |
 | `get_train_announcements` | Rail.TrafficInfo | TrainAnnouncement | 2.0 |
 | `get_train_messages` | ols.open | OperativeEvent | 1.0 |
+| `get_train_positions` | järnväg.trafikinfo | TrainPosition | 1.1 |
 | `get_road_situations` | Road.TrafficInfo | Situation | 1.6 |
 | `get_road_weather` | Road.WeatherInfo | WeatherObservation | 2.1 |
 
@@ -65,4 +66,4 @@ This depends on commit messages (or squash-merge PR titles) following [Conventio
 
 Tests mock global `fetch` through `mockTrafikinfo()` in `src/__tests__/helpers.ts`, which answers each query from a fixture chosen by the `objecttype` in the request body and records the request bodies so tests can assert on the generated XML. Fixtures live in `src/__tests__/fixtures/`. Always call `resetStationCache()` in `beforeEach`/`afterEach` for tests that touch stations, and stub `TRAFIKVERKET_API_KEY` with `vi.stubEnv`.
 
-`operative-events.json` is a real capture from the live API. The other fixtures were written by hand from the XSD schemas. All query shapes have been verified against the live API: namespaces, the `WITHIN` syntax and geometry paths (`Deviation.Geometry.Point.WGS84`, `Deviation.Geometry.Line.WGS84`, `Measurepoint.Geometry.WGS84`), `orderby` with `desc`, ISO timestamps with `Z` in time-window filters, and the `WeatherObservation` measured-value shape (`{ Origin, SensorNames, Value }`). Note that `OperativeEvent.Geometry.WGS84` is published as `POINT (lat lon)`, the reverse of every other object type, so do not feed it to `parseWgs84Point`.
+`operative-events.json` is a real capture from the live API. The other fixtures were written by hand from the XSD schemas. All query shapes have been verified against the live API: namespaces, the `WITHIN` syntax and geometry paths (`Deviation.Geometry.Point.WGS84`, `Deviation.Geometry.Line.WGS84`, `Measurepoint.Geometry.WGS84`), `orderby` with `desc`, ISO timestamps with `Z` in time-window filters, and the `WeatherObservation` measured-value shape (`{ Origin, SensorNames, Value }`). Note that `OperativeEvent.Geometry.WGS84` is published as `POINT (lat lon)`, the reverse of every other object type, so do not feed it to `parseWgs84Point`. The `TrainPosition` query and `train-positions.json` fixture were written from the schema and have not yet been verified against the live API; `parseTrainPoint` checks the coordinate order against Sweden's bounds in case `Position.WGS84` follows the `OperativeEvent` order.

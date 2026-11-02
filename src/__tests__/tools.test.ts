@@ -9,6 +9,8 @@ import {
   getTrainAnnouncementsTool,
   getTrainMessagesSchema,
   getTrainMessagesTool,
+  getTrainPositionsSchema,
+  getTrainPositionsTool,
   searchStationsSchema,
   searchStationsTool,
 } from '../tools/index.js';
@@ -18,6 +20,7 @@ import announcementsFixture from './fixtures/train-announcements.json';
 import operativeEventsFixture from './fixtures/operative-events.json';
 import situationsFixture from './fixtures/situations.json';
 import weatherFixture from './fixtures/weather-observations.json';
+import trainPositionsFixture from './fixtures/train-positions.json';
 
 beforeEach(() => {
   vi.stubEnv('TRAFIKVERKET_API_KEY', 'test-key');
@@ -302,6 +305,61 @@ describe('getRoadWeatherTool', () => {
     mockTrafikinfo({});
     await expect(getRoadWeatherTool({ latitude: 95, longitude: 12, radiusKm: 25, limit: 3 })).rejects.toThrow(
       /Invalid latitude/
+    );
+  });
+});
+
+describe('getTrainPositionsTool', () => {
+  it('locates a train by number and keeps only its newest report', async () => {
+    const requests = mockTrafikinfo({ TrainPosition: trainPositionsFixture });
+
+    const result = await getTrainPositionsTool(getTrainPositionsSchema.parse({ trainNumber: '421' }));
+
+    expect(requests[0]).toContain('objecttype="TrainPosition"');
+    expect(requests[0]).toContain('namespace="järnväg.trafikinfo"');
+    expect(requests[0]).toContain('schemaversion="1.1"');
+    expect(requests[0]).toContain('orderby="TimeStamp desc"');
+    expect(requests[0]).toContain(
+      '<OR><EQ name="Train.AdvertisedTrainNumber" value="421" /><EQ name="Train.OperationalTrainNumber" value="421" /></OR>'
+    );
+    expect(requests[0]).toContain('<GTE name="TimeStamp" value="');
+    expect(requests[0]).not.toContain('<WITHIN');
+
+    const train421 = result.trains.filter((t) => t.train === '421');
+    expect(train421).toHaveLength(1);
+    expect(train421[0]).toMatchObject({
+      latitude: 57.72,
+      longitude: 11.99,
+      speedKmh: 112,
+      bearingDegrees: 45,
+      active: true,
+      timestamp: '2026-11-02T22:10:00.000+01:00',
+    });
+    expect(train421[0].distanceKm).toBeUndefined();
+  });
+
+  it('searches around a point, nearest first, skipping deleted reports', async () => {
+    const requests = mockTrafikinfo({ TrainPosition: trainPositionsFixture });
+
+    const result = await getTrainPositionsTool(
+      getTrainPositionsSchema.parse({ latitude: 57.709, longitude: 11.975, radiusKm: 5, maxAgeMinutes: 15 })
+    );
+
+    expect(requests[0]).toContain(
+      '<WITHIN name="Position.WGS84" shape="center" value="11.975 57.709" radius="5000m" />'
+    );
+    expect(requests[0]).not.toContain('<EQ');
+    expect(result.radiusKm).toBe(5);
+    // 4711 has no advertised number and reports "POINT (lat lon)"; 3999 is deleted.
+    expect(result.trains.map((t) => t.train)).toEqual(['4711', '421']);
+    expect(result.trains[0]).toMatchObject({ latitude: 57.71, longitude: 11.976, distanceKm: 0.1 });
+  });
+
+  it('requires a train number or a location', async () => {
+    mockTrafikinfo({});
+    await expect(getTrainPositionsTool(getTrainPositionsSchema.parse({}))).rejects.toThrow(/trainNumber/);
+    await expect(getTrainPositionsTool(getTrainPositionsSchema.parse({ latitude: 57.7 }))).rejects.toThrow(
+      /together/
     );
   });
 });
