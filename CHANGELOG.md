@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/LittleAndi/trafikverket-mcp-server/compare/trafikverket-mcp-server-v1.2.0...trafikverket-mcp-server-v1.3.0) (2026-11-02)
+
+
+### Features
+
+* add get_railway_events tool ([#7](https://github.com/LittleAndi/trafikverket-mcp-server/issues/7)) ([e13a095](https://github.com/LittleAndi/trafikverket-mcp-server/commit/e13a0956d65938c95d7de436b8881d158303a905))
+
 ## [1.2.0](https://github.com/LittleAndi/trafikverket-mcp-server/compare/trafikverket-mcp-server-v1.1.0...trafikverket-mcp-server-v1.2.0) (2026-11-02)
 
 
