@@ -3,7 +3,7 @@
 /**
  * Trafikverket MCP Server
  * Exposes Trafikverket (Swedish Transport Administration) open traffic data as MCP tools:
- * train departures/arrivals and disruptions, road incidents and road weather.
+ * train departures/arrivals, disruptions and replacement traffic, road incidents and road weather.
  */
 
 import { readFileSync } from 'node:fs';
@@ -22,6 +22,8 @@ import {
   getRoadWeatherTool,
   getTrainPositionsSchema,
   getTrainPositionsTool,
+  getReplacementTrafficSchema,
+  getReplacementTrafficTool,
 } from './tools/index.js';
 
 const COVERAGE_NOTE = 'Coverage: Sweden only (Trafikverket data).';
@@ -142,6 +144,28 @@ server.registerTool(
     },
   },
   withErrorHandling(getTrainPositionsTool)
+);
+
+server.registerTool(
+  'get_replacement_traffic',
+  {
+    description:
+      `Get replacement traffic (ersättningstrafik) for Swedish trains: the buses, coaches or taxis that run ` +
+      `instead of cancelled trains, with the replaced train numbers, vehicle type, status (planned, ordered, ` +
+      `confirmed, running, finished, canceled), wheelchair access, toilet, and every stop with stop description ` +
+      `(where to board), planned/expected/actual times, delay in minutes and traveller notes. Filter by station ` +
+      `(name or signature; the stop there is returned as atStation), by replaced train number, and/or by the ` +
+      `replaced train's departure date; otherwise trips from minutesBack before now to hoursAhead after now. ` +
+      `Operators report this voluntarily, so not every replacement is listed: use get_train_announcements to ` +
+      `see which trains are cancelled and get_train_messages for the disruption behind them. ` +
+      `${ERROR_NOTE} ${COVERAGE_NOTE}`,
+    inputSchema: getReplacementTrafficSchema,
+    annotations: {
+      title: 'Get Replacement Traffic',
+      ...READONLY_ANNOTATIONS,
+    },
+  },
+  withErrorHandling(getReplacementTrafficTool)
 );
 
 server.registerTool(

@@ -15,3 +15,6 @@ export type { GetRoadWeatherInput } from './road-weather.js';
 
 export { getTrainPositionsSchema, getTrainPositionsTool } from './train-positions.js';
 export type { GetTrainPositionsInput } from './train-positions.js';
+
+export { getReplacementTrafficSchema, getReplacementTrafficTool } from './replacement-traffic.js';
+export type { GetReplacementTrafficInput } from './replacement-traffic.js';
