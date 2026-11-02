@@ -18,3 +18,5 @@ export type { GetTrainPositionsInput } from './train-positions.js';
 
 export { getReplacementTrafficSchema, getReplacementTrafficTool } from './replacement-traffic.js';
 export type { GetReplacementTrafficInput } from './replacement-traffic.js';
+export { getRailwayEventsSchema, getRailwayEventsTool } from './railway-events.js';
+export type { GetRailwayEventsInput } from './railway-events.js';

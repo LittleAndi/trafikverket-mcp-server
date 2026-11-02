@@ -1,0 +1,56 @@
+[
+  {
+    "EventId": "B261102-0153",
+    "StartDateTime": "2026-11-02T06:41:00.000+01:00",
+    "ReasonCode": "IBT01",
+    "OperativeEventId": "O261102-012",
+    "EventStatus": "OperativHändelse",
+    "Deleted": false,
+    "Version": 4,
+    "CreatedDateTime": "2026-11-02T06:44:12.000+01:00",
+    "ModifiedDateTime": "2026-11-02T07:58:40.000+01:00",
+    "SelectedSection": [
+      {
+        "FromLocation": { "CountryCode": "SE", "LocationIncluded": true, "LocationPrimaryCode": "4421", "Signature": "Hb" },
+        "ToLocation": { "CountryCode": "SE", "LocationIncluded": true, "LocationPrimaryCode": "4180", "Signature": "Lu" },
+        "IntermediateLocation": [
+          { "Signature": "Hör", "CountryCode": "SE", "LocationOrder": 2 },
+          { "Signature": "Hpbg", "CountryCode": "SE", "LocationOrder": 1 }
+        ]
+      }
+    ],
+    "ModifiedTime": "2026-11-02T06:58:41.123Z"
+  },
+  {
+    "EventId": "B261102-0161",
+    "StartDateTime": "2026-11-02T07:10:00.000+01:00",
+    "EndDateTime": "2099-01-01T00:00:00.000+01:00",
+    "ReasonCode": "FST02",
+    "EventStatus": "MöjligOperativHändelse",
+    "Deleted": false,
+    "Version": 1,
+    "CreatedDateTime": "2026-11-02T07:12:03.000+01:00",
+    "ModifiedDateTime": "2026-11-02T07:12:03.000+01:00",
+    "SelectedSection": [
+      {
+        "FromLocation": { "CountryCode": "SE", "Signature": "Cst" },
+        "ViaLocation": { "CountryCode": "SE", "Signature": "Odn" },
+        "ToLocation": { "CountryCode": "SE", "Signature": "Cst" }
+      }
+    ],
+    "ModifiedTime": "2026-11-02T06:12:04.000Z"
+  },
+  {
+    "EventId": "B261101-0870",
+    "StartDateTime": "2026-11-01T18:02:00.000+01:00",
+    "EndDateTime": "2026-11-01T18:40:00.000+01:00",
+    "ReasonCode": "OFA01",
+    "EventStatus": "Ingen",
+    "Deleted": false,
+    "Version": 2,
+    "CreatedDateTime": "2026-11-01T18:05:00.000+01:00",
+    "ModifiedDateTime": "2026-11-01T18:41:00.000+01:00",
+    "SelectedSection": [{ "FromLocation": { "CountryCode": "SE", "Signature": "G" } }],
+    "ModifiedTime": "2026-11-01T17:41:00.000Z"
+  }
+]
