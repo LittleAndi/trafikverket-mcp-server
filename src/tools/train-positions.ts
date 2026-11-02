@@ -42,9 +42,9 @@ export type GetTrainPositionsInput = z.infer<typeof getTrainPositionsSchema>;
 const inSweden = (p: LatLon) => p.latitude >= 54 && p.latitude <= 70 && p.longitude >= 9 && p.longitude <= 26;
 
 /**
- * Parses `Position.WGS84`. It should be "POINT (lon lat)" like every other object type, but OperativeEvent
- * publishes "POINT (lat lon)", so the order is checked against Sweden's bounds (the latitude and longitude
- * ranges there do not overlap) and swapped if needed.
+ * Parses `Position.WGS84`, a 3D WKT point. The TrainPosition 1.1 schema documents X Y Z order (longitude
+ * first), but OperativeEvent publishes "POINT (lat lon)" despite its schema, so the order is still checked
+ * against Sweden's bounds (the latitude and longitude ranges there do not overlap) and swapped if needed.
  */
 export function parseTrainPoint(wkt: string | undefined): LatLon | undefined {
   const point = parseWgs84Point(wkt);
@@ -105,7 +105,7 @@ export async function getTrainPositionsTool(input: GetTrainPositionsInput) {
     orderBy: 'TimeStamp desc',
   });
 
-  // Keep only the newest report per train run.
+  // Keep only the newest report per train run (the schema's key is operational number + departure date).
   const latest = new Map<string, RawTrainPosition>();
   for (const position of raw) {
     if (position.Deleted) continue;

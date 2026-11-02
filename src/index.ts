@@ -130,7 +130,7 @@ server.registerTool(
   'get_train_positions',
   {
     description:
-      `Get live GPS positions of Swedish trains: coordinates, speed (km/h), bearing (degrees, 0 = north) and ` +
+      `Get live GPS positions of Swedish trains: coordinates, speed (km/h), direction of travel (degrees) and ` +
       `when the position was reported. Locate one train by its train number, list trains within a radius of ` +
       `a point (latitude, longitude, radiusKm), or both. Only positions reported within the last ` +
       `maxAgeMinutes are returned. Use get_train_announcements for timetable and delay data at a station. ` +

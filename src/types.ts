@@ -70,14 +70,17 @@ export interface RawTrainPosition {
     JourneyPlanNumber?: string;
     JourneyPlanDepartureDate?: string;
   };
+  /** Last known position (3D WKT: "POINT (x y z)", X = longitude). */
   Position?: RawGeometry;
   /** When the position was measured. */
   TimeStamp?: string;
   Status?: { Active?: boolean };
-  /** Direction of travel in degrees (0-360, 0 = north). */
+  /** The train's absolute direction in degrees (the schema notes "bearing" is a misnomer). */
   Bearing?: number;
   /** Speed in km/h. */
   Speed?: number;
+  /** Version number of this train's position. */
+  VersionNumber?: number;
   ModifiedTime?: string;
   Deleted?: boolean;
 }

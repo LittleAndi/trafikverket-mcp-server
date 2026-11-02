@@ -5,7 +5,7 @@
       "OperationalTrainNumber": "421",
       "OperationalTrainDepartureDate": "2026-11-02T00:00:00.000+01:00"
     },
-    "Position": { "SWEREF99TM": "POINT (319400 6399700)", "WGS84": "POINT (11.9900 57.7200)" },
+    "Position": { "SWEREF99TM": "POINT (319400 6399700)", "WGS84": "POINT Z (11.9900 57.7200 0)" },
     "TimeStamp": "2026-11-02T22:10:00.000+01:00",
     "Status": { "Active": true },
     "Bearing": 45,
