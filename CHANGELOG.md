@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/LittleAndi/trafikverket-mcp-server/compare/trafikverket-mcp-server-v1.1.0...trafikverket-mcp-server-v1.2.0) (2026-11-02)
+
+
+### Features
+
+* add get_replacement_traffic tool ([#5](https://github.com/LittleAndi/trafikverket-mcp-server/issues/5)) ([d9801e8](https://github.com/LittleAndi/trafikverket-mcp-server/commit/d9801e8595dfe4cd5a403853bc60a3a8ad78ce1c))
+
 ## [1.1.0](https://github.com/LittleAndi/trafikverket-mcp-server/compare/trafikverket-mcp-server-v1.0.0...trafikverket-mcp-server-v1.1.0) (2026-11-02)
 
 
