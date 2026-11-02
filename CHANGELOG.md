@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/LittleAndi/trafikverket-mcp-server/compare/trafikverket-mcp-server-v1.0.0...trafikverket-mcp-server-v1.1.0) (2026-11-02)
+
+
+### Features
+
+* add get_train_positions tool ([#3](https://github.com/LittleAndi/trafikverket-mcp-server/issues/3)) ([bcc3b77](https://github.com/LittleAndi/trafikverket-mcp-server/commit/bcc3b77c66e8d8bd0fa5c0f4c4052dd7d3a7bf87))
+
 ## 1.0.0 (2026-10-25)
 
 
