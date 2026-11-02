@@ -3,7 +3,8 @@
  * Every field is optional: the API omits fields that have no value.
  *
  * Field names follow Trafikverket's published XSD schemas (TrainAnnouncement 2.0, OperativeEvent 1.0,
- * TrainStation 1.5, Situation 1.6, WeatherObservation 2.1, TrainPosition 1.1).
+ * TrainStation 1.5, Situation 1.6, WeatherObservation 2.1, TrainPosition 1.1,
+ * ReplacementTraffic 1.0).
  */
 
 export interface RawGeometry {
@@ -166,6 +167,60 @@ export interface RawWeatherObservation {
   Weather?: { Precipitation?: unknown };
 }
 
+/** A list element in the XSD (e.g. `<Stops><Stop/>...</Stops>`); accepted as the wrapper object or a bare array. */
+export type RawList<Key extends string, T> = { [K in Key]?: T[] | T } | T[];
+
+export interface RawReplacedTrain {
+  AdvertisedTrainIdent?: string;
+  /** Departure date of the replaced train, "YYYY-MM-DD". */
+  ScheduledDepartureDate?: string;
+  /** Product / operator of the replaced train. */
+  ProductInformation?: string;
+  TransportOperationalIdentifiers?: unknown;
+}
+
+export interface RawReplacementStop {
+  StopId?: string;
+  /** Trafikverket location signature of the stop. */
+  PlaceSignature?: string;
+  PrimaryLocationCode?: number;
+  CountryCode?: string;
+  /** Description of the departure, e.g. the destination shown to travellers. */
+  AdvertisedDestination?: string;
+  /** Description of the stop itself, e.g. "Busshållplats utanför stationshuset". */
+  StopDescription?: string;
+  StopPosition?: { Location?: { Longitude?: number; Latitude?: number } };
+  PlannedArrivalTime?: string;
+  ExpectedArrivalTime?: string;
+  PlannedDepartureTime?: string;
+  ExpectedDepartureTime?: string;
+  Sequence?: number;
+  DisembarkingOnly?: boolean;
+  TravellerNote?: string;
+  /** Actual arrival time. */
+  VehicleStopArrival?: string;
+  /** Actual departure time. */
+  VehicleStopDeparture?: string;
+  ConnectingStops?: RawList<'ConnectingStop', { PlaceSignature?: string; StopId?: string }>;
+}
+
+export interface RawReplacementTraffic {
+  Source?: string;
+  Id?: string;
+  ReplacesTrains?: RawList<'ReplacesTrain', RawReplacedTrain>;
+  Description?: string;
+  VehicleIdentifier?: string;
+  /** NeTEx vehicle mode: air, bus, coach, ferry, metro, rail, tram or taxi. */
+  VehicleMode?: string;
+  /** NeTEx status: planned, ordered, confirmed, running, finished or canceled. */
+  Status?: string;
+  WheelChair?: boolean;
+  Toilet?: boolean;
+  Stops?: RawList<'Stop', RawReplacementStop>;
+  Deleted?: boolean;
+  ModifiedTime?: string;
+}
+
 /* ---------- Processed output types ---------- */
 
 export interface Station {
@@ -283,4 +338,43 @@ export interface TrainPosition {
   active?: boolean;
   timestamp?: string;
   ageMinutes?: number;
+}
+
+export interface ReplacementStop {
+  name?: string;
+  signature?: string;
+  stopDescription?: string;
+  destination?: string;
+  latitude?: number;
+  longitude?: number;
+  plannedArrival?: string;
+  expectedArrival?: string;
+  actualArrival?: string;
+  plannedDeparture?: string;
+  expectedDeparture?: string;
+  actualDeparture?: string;
+  delayMinutes?: number;
+  disembarkingOnly?: boolean;
+  note?: string;
+  connectsTo: string[];
+}
+
+export interface ReplacementTrip {
+  id?: string;
+  source?: string;
+  description?: string;
+  vehicleMode?: string;
+  vehicleIdentifier?: string;
+  status?: string;
+  wheelchairAccessible?: boolean;
+  toilet?: boolean;
+  replacesTrains: Array<{ train?: string; departureDate?: string; product?: string }>;
+  from?: string;
+  to?: string;
+  departureTime?: string;
+  arrivalTime?: string;
+  /** The stop at the requested station, when a station was given. */
+  atStation?: ReplacementStop;
+  stops: ReplacementStop[];
+  lastUpdated?: string;
 }

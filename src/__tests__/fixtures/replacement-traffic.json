@@ -1,0 +1,83 @@
+[
+  {
+    "Source": "Vasttrafik",
+    "Id": "VT-2026-11-02-1043",
+    "ReplacesTrains": {
+      "ReplacesTrain": [
+        { "AdvertisedTrainIdent": "1043", "ScheduledDepartureDate": "2026-11-02", "ProductInformation": "Västtågen" }
+      ]
+    },
+    "Description": "Ersättningsbuss för tåg 1043 ",
+    "VehicleIdentifier": "ABC123",
+    "VehicleMode": "bus",
+    "Status": "running",
+    "WheelChair": true,
+    "Toilet": false,
+    "Stops": {
+      "Stop": [
+        {
+          "PlaceSignature": "Gs",
+          "StopDescription": "Hållplats Ullevi Södra",
+          "PlannedArrivalTime": "2026-11-02T21:15:00.000+01:00",
+          "ExpectedArrivalTime": "2026-11-02T21:20:00.000+01:00",
+          "PlannedDepartureTime": "2026-11-02T21:16:00.000+01:00",
+          "ExpectedDepartureTime": "2026-11-02T21:21:00.000+01:00",
+          "Sequence": 2
+        },
+        {
+          "PlaceSignature": "G",
+          "StopDescription": "Busshållplats Nils Ericson-terminalen, läge K",
+          "AdvertisedDestination": "Lund C",
+          "StopPosition": { "Location": { "Longitude": 11.9746, "Latitude": 57.7089 } },
+          "PlannedDepartureTime": "2026-11-02T21:00:00.000+01:00",
+          "ExpectedDepartureTime": "2026-11-02T21:05:00.000+01:00",
+          "VehicleStopDeparture": "2026-11-02T21:06:00.000+01:00",
+          "Sequence": 1,
+          "TravellerNote": "  Bussen avgår från läge K. ",
+          "ConnectingStops": { "ConnectingStop": [{ "PlaceSignature": "Cst" }] }
+        },
+        {
+          "PlaceSignature": "Lu",
+          "PlannedArrivalTime": "2026-11-02T23:30:00.000+01:00",
+          "Sequence": 3,
+          "DisembarkingOnly": true
+        }
+      ]
+    },
+    "ModifiedTime": "2026-11-02T21:06:30.000+01:00"
+  },
+  {
+    "Source": "Skanetrafiken",
+    "Id": "ST-1045",
+    "ReplacesTrains": {
+      "ReplacesTrain": { "AdvertisedTrainIdent": "1045", "ScheduledDepartureDate": "2026-11-02" }
+    },
+    "VehicleMode": "taxi",
+    "Status": "confirmed",
+    "Stops": [
+      { "PlaceSignature": "Hb", "PlannedDepartureTime": "2026-11-02T22:30:00.000+01:00" },
+      { "PlaceSignature": "XYZ", "PlannedArrivalTime": "2026-11-02T23:10:00.000+01:00" }
+    ],
+    "ModifiedTime": "2026-11-02T20:00:00.000+01:00"
+  },
+  {
+    "Source": "Skanetrafiken",
+    "Id": "ST-DELETED",
+    "ReplacesTrains": { "ReplacesTrain": [{ "AdvertisedTrainIdent": "1043", "ScheduledDepartureDate": "2026-11-02" }] },
+    "Stops": { "Stop": [{ "PlaceSignature": "G", "PlannedDepartureTime": "2026-11-02T21:30:00.000+01:00" }] },
+    "Deleted": true
+  },
+  {
+    "Source": "Vasttrafik",
+    "Id": "VT-OLD",
+    "ReplacesTrains": { "ReplacesTrain": [{ "AdvertisedTrainIdent": "1043", "ScheduledDepartureDate": "2026-11-01" }] },
+    "VehicleMode": "bus",
+    "Status": "finished",
+    "Stops": {
+      "Stop": [
+        { "PlaceSignature": "G", "PlannedDepartureTime": "2026-11-01T18:00:00.000+01:00", "Sequence": 1 },
+        { "PlaceSignature": "Lu", "PlannedArrivalTime": "2026-11-01T20:30:00.000+01:00", "Sequence": 2 }
+      ]
+    }
+  }
+]

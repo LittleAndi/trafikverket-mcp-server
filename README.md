@@ -1,6 +1,6 @@
 # Trafikverket MCP Server
 
-MCP server for [Trafikverket](https://www.trafikverket.se) (the Swedish Transport Administration) open traffic data: live train departures and arrivals, live train positions, railway disruptions, road incidents and measured road weather. Built on Trafikverket's open **Trafikinfo** API.
+MCP server for [Trafikverket](https://www.trafikverket.se) (the Swedish Transport Administration) open traffic data: live train departures and arrivals, live train positions, railway disruptions, replacement traffic for cancelled trains, road incidents and measured road weather. Built on Trafikverket's open **Trafikinfo** API.
 
 ## Features
 
@@ -8,6 +8,7 @@ MCP server for [Trafikverket](https://www.trafikverket.se) (the Swedish Transpor
 - **get_train_announcements** - Live departures or arrivals at a station, with delays, platforms and cancellations
 - **get_train_positions** - Live GPS position, speed and bearing of a train by number, or of all trains around a point
 - **get_train_messages** - Current railway traffic messages (track work, faults, disruptions), optionally per county
+- **get_replacement_traffic** - Replacement buses and taxis for cancelled trains, with stops, boarding locations and times
 - **get_road_situations** - Current road incidents: accidents, road works, obstacles and restrictions, by county and/or around a point
 - **get_road_weather** - Measured road weather (air and road surface temperature, wind, grip, precipitation) from the nearest roadside stations
 
@@ -94,6 +95,20 @@ Tool: get_train_messages
 Input: { "county": "Skåne" }
 ```
 
+### Replacement buses from Lund C
+
+```
+Tool: get_replacement_traffic
+Input: { "station": "Lund C" }
+```
+
+### What replaces train 1043 today?
+
+```
+Tool: get_replacement_traffic
+Input: { "trainNumber": "1043" }
+```
+
 ### Accidents within 30 km of Gothenburg
 
 ```
@@ -165,6 +180,21 @@ Current railway traffic messages (Trafikverket operative events): track work, fa
 | limit      | number          | No       | 20      | 1-100                                                    |
 
 Returns event type, header, description (when a public message has been published), start/end/expected end, and the affected stations and sections.
+
+### get_replacement_traffic
+
+Replacement traffic (ersättningstrafik) reported by the train operators: the bus, coach or taxi trips that run instead of cancelled trains. Not every replacement is reported, so check `get_train_announcements` for which trains are cancelled.
+
+| Parameter   | Type   | Required | Default | Description                                                                          |
+|-------------|--------|----------|---------|--------------------------------------------------------------------------------------|
+| station     | string | No       | -       | Only trips stopping here (station name or location signature)                        |
+| trainNumber | string | No       | -       | Only trips replacing this advertised train number                                    |
+| date        | string | No       | -       | Departure date of the replaced train (`YYYY-MM-DD`); searches the whole day instead of the time window |
+| minutesBack | number | No       | 30      | 0-240, include trips running or departing this many minutes before now               |
+| hoursAhead  | number | No       | 12      | 0.5-48, include trips departing up to this many hours after now                      |
+| limit       | number | No       | 20      | 1-50                                                                                 |
+
+Returns per trip: replaced trains (number, date, product), `vehicleMode` (`bus`, `coach`, `taxi`, ...), `status` (`planned`, `ordered`, `confirmed`, `running`, `finished`, `canceled`), vehicle identifier, `wheelchairAccessible`, `toilet`, origin/destination, departure/arrival time and every stop in order with stop description (where to board), coordinates, planned/expected/actual arrival and departure, `delayMinutes`, `disembarkingOnly`, traveller note and connecting stations. With `station`, the stop there is also returned as `atStation` and trips are ordered by the time at that stop.
 
 ### get_road_situations
 

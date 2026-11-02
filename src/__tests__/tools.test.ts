@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { resetStationCache } from '../stations.js';
 import {
+  getReplacementTrafficSchema,
+  getReplacementTrafficTool,
   getRoadSituationsSchema,
   getRoadSituationsTool,
   getRoadWeatherSchema,
@@ -21,6 +23,7 @@ import operativeEventsFixture from './fixtures/operative-events.json';
 import situationsFixture from './fixtures/situations.json';
 import weatherFixture from './fixtures/weather-observations.json';
 import trainPositionsFixture from './fixtures/train-positions.json';
+import replacementTrafficFixture from './fixtures/replacement-traffic.json';
 
 beforeEach(() => {
   vi.stubEnv('TRAFIKVERKET_API_KEY', 'test-key');
@@ -361,6 +364,114 @@ describe('getTrainPositionsTool', () => {
     await expect(getTrainPositionsTool(getTrainPositionsSchema.parse({ latitude: 57.7 }))).rejects.toThrow(
       /together/
     );
+  });
+});
+
+describe('getReplacementTrafficTool', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-11-02T21:10:00.000+01:00'));
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  const fixtures = { TrainStation: stationsFixture, ReplacementTraffic: replacementTrafficFixture };
+
+  it('lists trips in the time window, dropping deleted and finished ones', async () => {
+    const requests = mockTrafikinfo(fixtures);
+
+    const result = await getReplacementTrafficTool(getReplacementTrafficSchema.parse({}));
+
+    const request = requests.find((r) => r.includes('objecttype="ReplacementTraffic"')) as string;
+    expect(request).toContain('namespace="järnväg.trafikinfo"');
+    expect(request).toContain('schemaversion="1.0"');
+    // Server-side window on any stop's planned time, with an hour of slack on each side.
+    expect(request).toContain(
+      '<OR><GTE name="Stops.Stop.PlannedDepartureTime" value="2026-11-02T18:40:00.000Z" />' +
+        '<GTE name="Stops.Stop.PlannedArrivalTime" value="2026-11-02T18:40:00.000Z" /></OR>'
+    );
+    expect(request).toContain('<LTE name="Stops.Stop.PlannedDepartureTime" value="2026-11-03T09:10:00.000Z" />');
+
+    expect(result.trips.map((t) => t.id)).toEqual(['VT-2026-11-02-1043', 'ST-1045']);
+    const [bus, taxi] = result.trips;
+    expect(bus).toMatchObject({
+      source: 'Vasttrafik',
+      description: 'Ersättningsbuss för tåg 1043',
+      vehicleMode: 'bus',
+      vehicleIdentifier: 'ABC123',
+      status: 'running',
+      wheelchairAccessible: true,
+      toilet: false,
+      replacesTrains: [{ train: '1043', departureDate: '2026-11-02', product: 'Västtågen' }],
+      from: 'Göteborg C',
+      to: 'Lund C',
+      departureTime: '2026-11-02T21:06:00.000+01:00',
+      arrivalTime: '2026-11-02T23:30:00.000+01:00',
+      lastUpdated: '2026-11-02T21:06:30.000+01:00',
+    });
+    // Stops are ordered by Sequence, names resolved, notes trimmed, delays from actual/expected times.
+    expect(bus.stops.map((s) => s.signature)).toEqual(['G', 'Gs', 'Lu']);
+    expect(bus.stops[0]).toMatchObject({
+      name: 'Göteborg C',
+      stopDescription: 'Busshållplats Nils Ericson-terminalen, läge K',
+      destination: 'Lund C',
+      latitude: 57.7089,
+      longitude: 11.9746,
+      delayMinutes: 6,
+      note: 'Bussen avgår från läge K.',
+      connectsTo: ['Stockholm C'],
+    });
+    expect(bus.stops[1].delayMinutes).toBe(5);
+    expect(bus.stops[2]).toMatchObject({ disembarkingOnly: true, delayMinutes: undefined });
+    expect(bus.atStation).toBeUndefined();
+
+    // Single-object lists are unwrapped and unknown signatures fall back to the raw signature.
+    expect(taxi).toMatchObject({ from: 'Hässleholm C', to: 'XYZ', replacesTrains: [{ train: '1045' }] });
+  });
+
+  it('filters by station and returns the stop there', async () => {
+    const requests = mockTrafikinfo(fixtures);
+
+    const result = await getReplacementTrafficTool(getReplacementTrafficSchema.parse({ station: 'Göteborg Södra' }));
+
+    const request = requests.find((r) => r.includes('objecttype="ReplacementTraffic"')) as string;
+    expect(request).toContain('<EQ name="Stops.Stop.PlaceSignature" value="Gs" />');
+    expect(result.station).toEqual({ name: 'Göteborg Södra', signature: 'Gs' });
+    expect(result.trips.map((t) => t.id)).toEqual(['VT-2026-11-02-1043']);
+    expect(result.trips[0].atStation).toMatchObject({
+      signature: 'Gs',
+      stopDescription: 'Hållplats Ullevi Södra',
+      expectedDeparture: '2026-11-02T21:21:00.000+01:00',
+    });
+  });
+
+  it('filters by train number and date without a time window', async () => {
+    const requests = mockTrafikinfo(fixtures);
+
+    const result = await getReplacementTrafficTool(
+      getReplacementTrafficSchema.parse({ trainNumber: '1043', date: '2026-11-01' })
+    );
+
+    const request = requests.find((r) => r.includes('objecttype="ReplacementTraffic"')) as string;
+    expect(request).toContain('<EQ name="ReplacesTrains.ReplacesTrain.AdvertisedTrainIdent" value="1043" />');
+    expect(request).toContain('<EQ name="ReplacesTrains.ReplacesTrain.ScheduledDepartureDate" value="2026-11-01" />');
+    expect(request).not.toContain('PlannedDepartureTime');
+    expect(result.window).toBeUndefined();
+    expect(result.trips.map((t) => t.id)).toEqual(['VT-OLD']);
+    expect(result.trips[0].status).toBe('finished');
+  });
+
+  it('respects the limit and reports the total', async () => {
+    mockTrafikinfo(fixtures);
+
+    const result = await getReplacementTrafficTool(getReplacementTrafficSchema.parse({ limit: 1 }));
+
+    expect(result).toMatchObject({ count: 1, totalMatches: 2 });
+  });
+
+  it('rejects malformed dates', () => {
+    expect(() => getReplacementTrafficSchema.parse({ date: '2/11' })).toThrow(/YYYY-MM-DD/);
   });
 });
 
