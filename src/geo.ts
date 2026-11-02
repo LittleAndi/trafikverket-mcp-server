@@ -5,10 +5,13 @@ export interface LatLon {
   longitude: number;
 }
 
-const WKT_POINT = /POINT\s*\(\s*(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)\s*\)/i;
+const NUM = String.raw`-?\d+(?:\.\d+)?`;
+/** Matches 2D and 3D points ("POINT (x y)", "POINT (x y z)", "POINT Z (x y z)"); any Z/M value is ignored. */
+const WKT_POINT = new RegExp(String.raw`POINT\s*(?:[ZM]{1,2}\s*)?\(\s*(${NUM})\s+(${NUM})(?:\s+${NUM}){0,2}\s*\)`, 'i');
 
 /**
- * Parses a WGS 84 WKT point as returned by the API, e.g. "POINT (11.9746 57.7089)".
+ * Parses a WGS 84 WKT point as returned by the API, e.g. "POINT (11.9746 57.7089)" or the 3D
+ * "POINT Z (11.9746 57.7089 12.5)" used by TrainPosition.
  * WKT order is longitude first, then latitude.
  */
 export function parseWgs84Point(wkt: string | undefined): LatLon | undefined {

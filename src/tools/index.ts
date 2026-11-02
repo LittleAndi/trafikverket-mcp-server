@@ -12,3 +12,6 @@ export type { GetRoadSituationsInput } from './road-situations.js';
 
 export { getRoadWeatherSchema, getRoadWeatherTool } from './road-weather.js';
 export type { GetRoadWeatherInput } from './road-weather.js';
+
+export { getTrainPositionsSchema, getTrainPositionsTool } from './train-positions.js';
+export type { GetTrainPositionsInput } from './train-positions.js';

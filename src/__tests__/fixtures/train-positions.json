@@ -1,0 +1,48 @@
+[
+  {
+    "Train": {
+      "AdvertisedTrainNumber": "421",
+      "OperationalTrainNumber": "421",
+      "OperationalTrainDepartureDate": "2026-11-02T00:00:00.000+01:00"
+    },
+    "Position": { "SWEREF99TM": "POINT (319400 6399700)", "WGS84": "POINT Z (11.9900 57.7200 0)" },
+    "TimeStamp": "2026-11-02T22:10:00.000+01:00",
+    "Status": { "Active": true },
+    "Bearing": 45,
+    "Speed": 112,
+    "ModifiedTime": "2026-11-02T22:10:01.000+01:00"
+  },
+  {
+    "Train": {
+      "AdvertisedTrainNumber": "421",
+      "OperationalTrainNumber": "421",
+      "OperationalTrainDepartureDate": "2026-11-02T00:00:00.000+01:00"
+    },
+    "Position": { "WGS84": "POINT (11.9750 57.7090)" },
+    "TimeStamp": "2026-11-02T22:08:00.000+01:00",
+    "Status": { "Active": true },
+    "Bearing": 40,
+    "Speed": 60
+  },
+  {
+    "Train": {
+      "OperationalTrainNumber": "4711",
+      "OperationalTrainDepartureDate": "2026-11-02T00:00:00.000+01:00"
+    },
+    "Position": { "WGS84": "POINT (57.7100 11.9760)" },
+    "TimeStamp": "2026-11-02T22:09:30.000+01:00",
+    "Status": { "Active": true },
+    "Bearing": 180,
+    "Speed": 0
+  },
+  {
+    "Train": {
+      "AdvertisedTrainNumber": "3999",
+      "OperationalTrainNumber": "3999",
+      "OperationalTrainDepartureDate": "2026-11-02T00:00:00.000+01:00"
+    },
+    "Position": { "WGS84": "POINT (11.9800 57.7100)" },
+    "TimeStamp": "2026-11-02T22:09:00.000+01:00",
+    "Deleted": true
+  }
+]

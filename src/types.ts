@@ -3,7 +3,7 @@
  * Every field is optional: the API omits fields that have no value.
  *
  * Field names follow Trafikverket's published XSD schemas (TrainAnnouncement 2.0, OperativeEvent 1.0,
- * TrainStation 1.5, Situation 1.6, WeatherObservation 2.1).
+ * TrainStation 1.5, Situation 1.6, WeatherObservation 2.1, TrainPosition 1.1).
  */
 
 export interface RawGeometry {
@@ -60,6 +60,29 @@ export interface RawTrainAnnouncement {
 export interface RawEventLocation {
   Signature?: string;
   LocationIncluded?: boolean;
+}
+
+export interface RawTrainPosition {
+  Train?: {
+    AdvertisedTrainNumber?: string;
+    OperationalTrainNumber?: string;
+    OperationalTrainDepartureDate?: string;
+    JourneyPlanNumber?: string;
+    JourneyPlanDepartureDate?: string;
+  };
+  /** Last known position (3D WKT: "POINT (x y z)", X = longitude). */
+  Position?: RawGeometry;
+  /** When the position was measured. */
+  TimeStamp?: string;
+  Status?: { Active?: boolean };
+  /** The train's absolute direction in degrees (the schema notes "bearing" is a misnomer). */
+  Bearing?: number;
+  /** Speed in km/h. */
+  Speed?: number;
+  /** Version number of this train's position. */
+  VersionNumber?: number;
+  ModifiedTime?: string;
+  Deleted?: boolean;
 }
 
 export interface RawOperativeEvent {
@@ -246,4 +269,18 @@ export interface RoadWeatherStation {
     windMaxMs?: number;
   };
   precipitationType?: unknown;
+}
+
+export interface TrainPosition {
+  train?: string;
+  operationalTrainNumber?: string;
+  departureDate?: string;
+  latitude?: number;
+  longitude?: number;
+  distanceKm?: number;
+  speedKmh?: number;
+  bearingDegrees?: number;
+  active?: boolean;
+  timestamp?: string;
+  ageMinutes?: number;
 }

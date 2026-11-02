@@ -8,6 +8,12 @@ describe('geo helpers', () => {
     expect(parseWgs84Point('point(-1.5 -2.25)')).toEqual({ latitude: -2.25, longitude: -1.5 });
   });
 
+  it('parses 3D WKT points, ignoring the Z value', () => {
+    expect(parseWgs84Point('POINT Z (11.9746 57.7089 12.5)')).toEqual({ latitude: 57.7089, longitude: 11.9746 });
+    expect(parseWgs84Point('POINT (11.9746 57.7089 0)')).toEqual({ latitude: 57.7089, longitude: 11.9746 });
+    expect(parseWgs84Point('POINTZ(11.9746 57.7089 3)')).toEqual({ latitude: 57.7089, longitude: 11.9746 });
+  });
+
   it('returns undefined for missing or non-point geometry', () => {
     expect(parseWgs84Point(undefined)).toBeUndefined();
     expect(parseWgs84Point('LINESTRING (1 2, 3 4)')).toBeUndefined();
