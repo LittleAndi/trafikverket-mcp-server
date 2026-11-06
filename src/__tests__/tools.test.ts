@@ -387,7 +387,7 @@ describe('getReplacementTrafficTool', () => {
     const result = await getReplacementTrafficTool(getReplacementTrafficSchema.parse({}));
 
     const request = requests.find((r) => r.includes('objecttype="ReplacementTraffic"')) as string;
-    expect(request).toContain('namespace="järnväg.trafikinfo"');
+    expect(request).toContain('namespace="JBS"');
     expect(request).toContain('schemaversion="1.0"');
     // Server-side window on any stop's planned time, with an hour of slack on each side.
     expect(request).toContain(

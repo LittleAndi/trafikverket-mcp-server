@@ -48,10 +48,10 @@ export const getReplacementTrafficSchema = z.object({
 export type GetReplacementTrafficInput = z.infer<typeof getReplacementTrafficSchema>;
 
 /**
- * Namespace and schema version for ReplacementTraffic. Written from the v1 XSD; not yet verified against
- * the live API (check https://data.trafikverket.se/apb/prod/schema?endpoint= if the query starts failing).
+ * Namespace and schema version for ReplacementTraffic, from the live schema catalogue. The query is written from
+ * the v1 XSD and not yet verified against the live API (check https://data.trafikverket.se/apb/prod/schema?endpoint= if it starts failing).
  */
-export const REPLACEMENT_TRAFFIC_NAMESPACE = 'järnväg.trafikinfo';
+export const REPLACEMENT_TRAFFIC_NAMESPACE = 'JBS';
 export const REPLACEMENT_TRAFFIC_SCHEMA_VERSION = '1.0';
 
 const STOP = 'Stops.Stop';
