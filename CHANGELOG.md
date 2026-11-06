@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/LittleAndi/trafikverket-mcp-server/compare/trafikverket-mcp-server-v1.3.0...trafikverket-mcp-server-v1.3.1) (2026-11-06)
+
+
+### Bug Fixes
+
+* use JBS namespace for ReplacementTraffic query ([#9](https://github.com/LittleAndi/trafikverket-mcp-server/issues/9)) ([16e8638](https://github.com/LittleAndi/trafikverket-mcp-server/commit/16e8638cc8dc63bfc196dcca138cac5885583a2a))
+
 ## [1.3.0](https://github.com/LittleAndi/trafikverket-mcp-server/compare/trafikverket-mcp-server-v1.2.0...trafikverket-mcp-server-v1.3.0) (2026-11-02)
 
 
