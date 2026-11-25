@@ -13,6 +13,16 @@ MCP server for [Trafikverket](https://www.trafikverket.se) (the Swedish Transpor
 - **get_road_situations** - Current road incidents: accidents, road works, obstacles and restrictions, by county and/or around a point
 - **get_road_weather** - Measured road weather (air and road surface temperature, wind, grip, precipitation) from the nearest roadside stations
 
+## Examples
+
+Real conversations in Claude using the server.
+
+<p>
+  <img src="docs/images/train-example.png" alt="Asking whether the next X2000 from Gothenburg to Stockholm is on time" width="360">
+  &nbsp;
+  <img src="docs/images/road-example.png" alt="Asking about road issues between Gothenburg and Stockholm, preferably via E4" width="360">
+</p>
+
 ## Coverage
 
 Sweden only (Trafikverket's state road and railway network).
