@@ -49,6 +49,7 @@ export interface RawTrainAnnouncement {
   FromLocation?: RawLocationRef[];
   InformationOwner?: string;
   LocationSignature?: string;
+  ModifiedTime?: string;
   Operator?: string;
   OtherInformation?: RawCodeDescription[];
   ProductInformation?: RawCodeDescription[];
@@ -164,6 +165,7 @@ export interface RawDeviation {
   AffectedDirection?: string;
   CountyNo?: number[];
   CreationTime?: string;
+  VersionTime?: string;
   WebLink?: string;
   Geometry?: { Point?: RawGeometry; Line?: RawGeometry };
 }
@@ -268,6 +270,9 @@ export interface Station {
   longitude?: number;
 }
 
+/** Which time `delayMinutes` was computed from; "preliminary" is a preliminary estimate. */
+export type DelayBasis = 'actual' | 'estimated' | 'preliminary' | 'none';
+
 export interface TrainAnnouncement {
   train?: string;
   direction?: 'departure' | 'arrival';
@@ -281,10 +286,13 @@ export interface TrainAnnouncement {
   estimatedTime?: string;
   estimatedTimeIsPreliminary?: boolean;
   actualTime?: string;
-  delayMinutes?: number;
+  /** null when there is no basis for a delay, which means unknown rather than on time. */
+  delayMinutes: number | null;
+  delayBasis: DelayBasis;
   canceled: boolean;
   deviations: string[];
   otherInformation: string[];
+  lastUpdated?: string;
 }
 
 export interface TrainMessage {
@@ -297,6 +305,8 @@ export interface TrainMessage {
   endTime?: string;
   expectedEndTime?: string;
   lastUpdated?: string;
+  /** When the public message behind header and description was last modified. */
+  messageLastUpdated?: string;
   counties: number[];
   affectedLocations: string[];
   fromLocations: string[];
@@ -351,6 +361,7 @@ export interface RoadSituation {
   lineWgs84?: string;
   distanceKm?: number;
   webLink?: string;
+  lastUpdated?: string;
 }
 
 export interface RoadWeatherStation {
@@ -360,6 +371,8 @@ export interface RoadWeatherStation {
   longitude?: number;
   distanceKm?: number;
   sampleTime?: string;
+  /** Minutes between the sample and `fetchedAt`. */
+  ageMinutes?: number;
   airTemperatureC?: number;
   humidityPercent?: number;
   dewpointC?: number;

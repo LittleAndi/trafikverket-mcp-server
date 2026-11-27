@@ -5,6 +5,7 @@
     "Deviation": [
       {
         "Id": "SE_STA_TRISSID_1_1",
+        "VersionTime": "2026-10-25T15:58:00.000+01:00",
         "Header": "Olycka",
         "Message": "Olycka med flera fordon. Körfält avstängt.",
         "MessageType": "Olycka",

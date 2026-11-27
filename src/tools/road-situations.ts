@@ -68,6 +68,7 @@ export function toRoadSituation(
     lineWgs84: deviation.Geometry?.Line?.WGS84,
     distanceKm: origin && point ? round1(distanceKm(origin, point)) : undefined,
     webLink: deviation.WebLink,
+    lastUpdated: deviation.VersionTime,
   };
 }
 
@@ -100,6 +101,7 @@ export async function getRoadSituationsTool(input: GetRoadSituationsInput) {
     ),
     limit: input.limit,
   });
+  const fetchedAt = new Date().toISOString();
 
   const now = Date.now();
   const situations = raw
@@ -118,6 +120,7 @@ export async function getRoadSituationsTool(input: GetRoadSituationsInput) {
     .slice(0, input.limit);
 
   return {
+    fetchedAt,
     county,
     center: origin,
     radiusKm: origin ? input.radiusKm : undefined,

@@ -31,8 +31,10 @@ export type GetRoadWeatherInput = z.infer<typeof getRoadWeatherSchema>;
 
 export function toRoadWeatherStation(
   raw: RawWeatherObservation,
-  origin: { latitude: number; longitude: number }
+  origin: { latitude: number; longitude: number },
+  now = Date.now()
 ): RoadWeatherStation {
+  const sampled = raw.Sample ? Date.parse(raw.Sample) : NaN;
   const point = parseWgs84Point(raw.Measurepoint?.Geometry?.WGS84);
   const surface = raw.Surface;
   const aggregated = raw.Aggregated10minutes;
@@ -44,6 +46,7 @@ export function toRoadWeatherStation(
     longitude: point?.longitude,
     distanceKm: point ? round1(distanceKm(origin, point)) : undefined,
     sampleTime: raw.Sample,
+    ageMinutes: Number.isNaN(sampled) ? undefined : round1(Math.max(0, now - sampled) / 60_000),
     airTemperatureC: raw.Air?.Temperature?.Value,
     humidityPercent: raw.Air?.RelativeHumidity?.Value,
     dewpointC: raw.Air?.Dewpoint?.Value,
@@ -87,6 +90,7 @@ export async function getRoadWeatherTool(input: GetRoadWeatherInput) {
     ),
     orderBy: 'Sample desc',
   });
+  const fetched = new Date();
 
   // Keep only the newest observation per measurepoint, then take the nearest stations.
   const latest = new Map<string, RawWeatherObservation>();
@@ -99,11 +103,12 @@ export async function getRoadWeatherTool(input: GetRoadWeatherInput) {
   }
 
   const stations = [...latest.values()]
-    .map((o) => toRoadWeatherStation(o, origin))
+    .map((o) => toRoadWeatherStation(o, origin, fetched.getTime()))
     .sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity))
     .slice(0, input.limit);
 
   return {
+    fetchedAt: fetched.toISOString(),
     center: origin,
     radiusKm: input.radiusKm,
     count: stations.length,

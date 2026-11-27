@@ -50,6 +50,7 @@ export function toTrainMessage(raw: RawOperativeEvent, names: Map<string, string
     endTime: raw.EndDateTime,
     expectedEndTime: latest(impact.map((i) => i.EndDateTime)),
     lastUpdated: raw.ModifiedDateTime,
+    messageLastUpdated: current?.ModifiedDateTime,
     counties: raw.CountyNo ?? [],
     affectedLocations: signatures(
       impact.flatMap((i) =>
@@ -78,10 +79,12 @@ export async function getTrainMessagesTool(input: GetTrainMessagesInput) {
     orderBy: 'ModifiedDateTime desc',
     limit: input.limit,
   });
+  const fetchedAt = new Date().toISOString();
 
   const names = await stationNameMap();
 
   return {
+    fetchedAt,
     county,
     count: raw.length,
     messages: raw.map((m) => toTrainMessage(m, names)),

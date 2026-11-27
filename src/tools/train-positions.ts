@@ -104,6 +104,7 @@ export async function getTrainPositionsTool(input: GetTrainPositionsInput) {
     ),
     orderBy: 'TimeStamp desc',
   });
+  const fetchedAt = new Date().toISOString();
 
   // Keep only the newest report per train run (the schema's key is operational number + departure date).
   const latest = new Map<string, RawTrainPosition>();
@@ -127,6 +128,7 @@ export async function getTrainPositionsTool(input: GetTrainPositionsInput) {
     .slice(0, input.limit);
 
   return {
+    fetchedAt,
     trainNumber: input.trainNumber,
     center: origin,
     radiusKm: origin ? input.radiusKm : undefined,

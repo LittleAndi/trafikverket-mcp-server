@@ -178,6 +178,7 @@ export async function getReplacementTrafficTool(input: GetReplacementTrafficInpu
       input.date ? undefined : anyStopTime(lte, new Date(to.getTime() + slackMs).toISOString())
     ),
   });
+  const fetchedAt = new Date().toISOString();
 
   const names = await stationNameMap();
 
@@ -203,6 +204,7 @@ export async function getReplacementTrafficTool(input: GetReplacementTrafficInpu
     });
 
   return {
+    fetchedAt,
     station: station ? { name: station.name, signature: station.signature } : undefined,
     trainNumber: input.trainNumber,
     date: input.date,
