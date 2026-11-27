@@ -628,6 +628,24 @@ describe('fetchedAt', () => {
     vi.useRealTimers();
   });
 
+  it('is what train position ages are measured from', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-11-02T22:10:00.000+01:00'));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        // The response takes two minutes to arrive.
+        vi.setSystemTime(new Date('2026-11-02T22:12:00.000+01:00'));
+        const result = { TrainPosition: [{ TimeStamp: '2026-11-02T22:10:00.000+01:00' }] };
+        return new Response(JSON.stringify({ RESPONSE: { RESULT: [result] } }), { status: 200 });
+      })
+    );
+
+    const result = await getTrainPositionsTool(getTrainPositionsSchema.parse({ trainNumber: '421' }));
+
+    expect(result.trains[0].ageMinutes).toBe(2);
+  });
+
   const point = { latitude: 57.5, longitude: 12.1 };
 
   it.each([

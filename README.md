@@ -193,7 +193,7 @@ Live GPS positions of trains. Give a train number, a point to search around, or 
 
 \* At least `trainNumber` or `latitude`/`longitude` is required.
 
-Returns per train (newest report only): train number, departure date, coordinates, `distanceKm` (radius searches, nearest first), `speedKmh`, `bearingDegrees` (direction of travel), `active`, report `timestamp` and `ageMinutes` (the position's age when it was requested).
+Returns per train (newest report only): train number, departure date, coordinates, `distanceKm` (radius searches, nearest first), `speedKmh`, `bearingDegrees` (direction of travel), `active`, report `timestamp` and `ageMinutes` (the position's age at `fetchedAt`).
 
 ### get_train_messages
 

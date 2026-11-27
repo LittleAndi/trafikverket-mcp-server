@@ -173,7 +173,7 @@ server.registerTool(
       `when the position was reported. Locate one train by its train number, list trains within a radius of ` +
       `a point (latitude, longitude, radiusKm), or both. Only positions reported within the last ` +
       `maxAgeMinutes are returned. Use get_train_announcements for timetable and delay data at a station. ` +
-      `${FRESHNESS_NOTE} ageMinutes is the position's age when it was requested. ` +
+      `${FRESHNESS_NOTE} ageMinutes is each position's age at fetchedAt. ` +
       `${ERROR_NOTE} ${COVERAGE_NOTE}`,
     inputSchema: getTrainPositionsSchema,
     annotations: {
