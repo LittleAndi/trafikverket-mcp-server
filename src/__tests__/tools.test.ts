@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { resetStationCache } from '../stations.js';
+import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from 'vitest';
+import { resetStationCache, stationNameMap } from '../stations.js';
 import {
   getReplacementTrafficSchema,
   getReplacementTrafficTool,
@@ -27,6 +27,12 @@ import weatherFixture from './fixtures/weather-observations.json';
 import trainPositionsFixture from './fixtures/train-positions.json';
 import replacementTrafficFixture from './fixtures/replacement-traffic.json';
 import railwayEventsFixture from './fixtures/railway-events.json';
+
+// Passes through to the real functions; the spy lets a test see when station names are looked up.
+vi.mock('../stations.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../stations.js')>();
+  return { ...actual, stationNameMap: vi.fn(actual.stationNameMap) };
+});
 
 beforeEach(() => {
   vi.stubEnv('TRAFIKVERKET_API_KEY', 'test-key');
@@ -306,6 +312,10 @@ describe('getRoadSituationsTool', () => {
 });
 
 describe('getRoadWeatherTool', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('returns the newest observation per station, nearest first', async () => {
     const requests = mockTrafikinfo({ WeatherObservation: weatherFixture });
 
@@ -347,7 +357,6 @@ describe('getRoadWeatherTool', () => {
     const result = await getRoadWeatherTool(
       getRoadWeatherSchema.parse({ latitude: 57.5, longitude: 12.1, limit: 5 })
     );
-    vi.useRealTimers();
 
     expect(result.stations.map((s) => s.ageMinutes)).toEqual([110, 110, undefined]);
   });
@@ -632,12 +641,22 @@ describe('fetchedAt', () => {
   ])('is when the %s response arrived', async (objectType, run) => {
     vi.useFakeTimers({ toFake: ['Date'] });
     vi.setSystemTime(new Date('2026-11-02T20:00:00.000Z'));
+    // The station name lookup takes until 20:00:09, even when the station list is already cached.
+    const lookup = vi.mocked(stationNameMap);
+    const realLookup = lookup.getMockImplementation()!;
+    lookup.mockImplementation(async () => {
+      vi.setSystemTime(new Date('2026-11-02T20:00:09.000Z'));
+      return new Map();
+    });
+    onTestFinished(() => {
+      lookup.mockImplementation(realLookup);
+    });
     vi.stubGlobal(
       'fetch',
       vi.fn(async (_url: unknown, init?: { body?: unknown }) => {
         const isMainQuery = String(init?.body).includes(`objecttype="${objectType}"`);
-        // The main response arrives at 20:00:05; station lookups made afterwards must not move fetchedAt.
-        vi.setSystemTime(new Date(isMainQuery ? '2026-11-02T20:00:05.000Z' : '2026-11-02T20:00:09.000Z'));
+        // The main response arrives at 20:00:05; the lookup made afterwards must not move fetchedAt.
+        if (isMainQuery) vi.setSystemTime(new Date('2026-11-02T20:00:05.000Z'));
         const result = isMainQuery ? { [objectType]: [] } : { TrainStation: stationsFixture };
         return new Response(JSON.stringify({ RESPONSE: { RESULT: [result] } }), { status: 200 });
       })
