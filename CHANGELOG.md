@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/LittleAndi/trafikverket-mcp-server/compare/trafikverket-mcp-server-v1.3.1...trafikverket-mcp-server-v1.4.0) (2026-11-28)
+
+
+### Features
+
+* show data freshness with fetchedAt, lastUpdated and delay basis ([#13](https://github.com/LittleAndi/trafikverket-mcp-server/issues/13)) ([4371be8](https://github.com/LittleAndi/trafikverket-mcp-server/commit/4371be8aab41e2c8960b36dd93ccfa39d64069fe))
+
 ## [1.3.1](https://github.com/LittleAndi/trafikverket-mcp-server/compare/trafikverket-mcp-server-v1.3.0...trafikverket-mcp-server-v1.3.1) (2026-11-06)
 
 
