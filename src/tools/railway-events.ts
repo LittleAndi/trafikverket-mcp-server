@@ -106,6 +106,7 @@ export async function getRailwayEventsTool(input: GetRailwayEventsInput) {
     orderBy: 'ModifiedDateTime desc',
     limit: input.limit,
   });
+  const fetchedAt = new Date().toISOString();
 
   const names = await stationNameMap();
   // Re-check the end time client-side in case the server-side time filter lets an ended event through.
@@ -114,6 +115,7 @@ export async function getRailwayEventsTool(input: GetRailwayEventsInput) {
     .map((e) => toRailwayEvent(e, names, now.getTime()));
 
   return {
+    fetchedAt,
     station: station ? { name: station.name, signature: station.signature } : undefined,
     count: events.length,
     events,

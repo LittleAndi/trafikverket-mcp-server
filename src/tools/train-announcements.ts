@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { resolveStation, stationNameMap } from '../stations.js';
 import { and, eq, gte, lte, queryTrafikinfo } from '../trafikverket-client.js';
-import type { RawLocationRef, RawTrainAnnouncement, TrainAnnouncement } from '../types.js';
+import type { DelayBasis, RawLocationRef, RawTrainAnnouncement, TrainAnnouncement } from '../types.js';
 
 export const getTrainAnnouncementsSchema = z.object({
   station: z
@@ -44,13 +44,21 @@ function locationNames(items: RawLocationRef[] | undefined, names: Map<string, s
     .map((signature) => names.get(signature) ?? signature);
 }
 
-/** Minutes between the advertised time and the best known actual/estimated time (positive = late). */
-function delayMinutes(raw: RawTrainAnnouncement): number | undefined {
+/**
+ * Minutes between the advertised time and the best known actual/estimated time (positive = late), with the
+ * kind of time it was computed from.
+ */
+function delay(raw: RawTrainAnnouncement): Pick<TrainAnnouncement, 'delayMinutes' | 'delayBasis'> {
   const advertised = raw.AdvertisedTimeAtLocation ? Date.parse(raw.AdvertisedTimeAtLocation) : NaN;
   const actualOrEstimated = raw.TimeAtLocation ?? raw.EstimatedTimeAtLocation;
   const actual = actualOrEstimated ? Date.parse(actualOrEstimated) : NaN;
-  if (Number.isNaN(advertised) || Number.isNaN(actual)) return undefined;
-  return Math.round((actual - advertised) / 60_000);
+  if (Number.isNaN(advertised) || Number.isNaN(actual)) return { delayMinutes: null, delayBasis: 'none' };
+  const delayBasis: DelayBasis = raw.TimeAtLocation
+    ? 'actual'
+    : raw.EstimatedTimeIsPreliminary
+      ? 'preliminary'
+      : 'estimated';
+  return { delayMinutes: Math.round((actual - advertised) / 60_000), delayBasis };
 }
 
 export function toTrainAnnouncement(raw: RawTrainAnnouncement, names: Map<string, string>): TrainAnnouncement {
@@ -67,10 +75,11 @@ export function toTrainAnnouncement(raw: RawTrainAnnouncement, names: Map<string
     estimatedTime: raw.EstimatedTimeAtLocation,
     estimatedTimeIsPreliminary: raw.EstimatedTimeIsPreliminary,
     actualTime: raw.TimeAtLocation,
-    delayMinutes: delayMinutes(raw),
+    ...delay(raw),
     canceled: raw.Canceled === true,
     deviations: descriptions(raw.Deviation),
     otherInformation: descriptions(raw.OtherInformation),
+    lastUpdated: raw.ModifiedTime,
   };
 }
 
@@ -95,10 +104,12 @@ export async function getTrainAnnouncementsTool(input: GetTrainAnnouncementsInpu
     orderBy: 'AdvertisedTimeAtLocation',
     limit: input.limit,
   });
+  const fetchedAt = new Date().toISOString();
 
   const names = await stationNameMap();
 
   return {
+    fetchedAt,
     station: { name: station.name, signature: station.signature },
     direction: input.direction,
     window: { from: from.toISOString(), to: to.toISOString() },

@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { resetStationCache } from '../stations.js';
+import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from 'vitest';
+import { resetStationCache, stationNameMap } from '../stations.js';
 import {
   getReplacementTrafficSchema,
   getReplacementTrafficTool,
@@ -27,6 +27,12 @@ import weatherFixture from './fixtures/weather-observations.json';
 import trainPositionsFixture from './fixtures/train-positions.json';
 import replacementTrafficFixture from './fixtures/replacement-traffic.json';
 import railwayEventsFixture from './fixtures/railway-events.json';
+
+// Passes through to the real functions; the spy lets a test see when station names are looked up.
+vi.mock('../stations.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../stations.js')>();
+  return { ...actual, stationNameMap: vi.fn(actual.stationNameMap) };
+});
 
 beforeEach(() => {
   vi.stubEnv('TRAFIKVERKET_API_KEY', 'test-key');
@@ -93,13 +99,47 @@ describe('getTrainAnnouncementsTool', () => {
       to: ['Göteborg C'],
       track: '14',
       delayMinutes: 7,
+      delayBasis: 'estimated',
+      lastUpdated: '2026-10-25T16:21:30.000Z',
       canceled: false,
       deviations: ['Försenad'],
     });
     // Destinations are ordered by priority and resolved to station names.
-    expect(canceled).toMatchObject({ canceled: true, to: ['Lund C', 'Göteborg Södra'], delayMinutes: undefined });
+    expect(canceled).toMatchObject({
+      canceled: true,
+      to: ['Lund C', 'Göteborg Södra'],
+      delayMinutes: null,
+      delayBasis: 'none',
+    });
+    expect(canceled.lastUpdated).toBeUndefined();
+    // An unknown delay stays visible in the JSON the model reads.
+    expect(JSON.stringify(canceled)).toContain('"delayMinutes":null');
     // Unknown signatures fall back to the raw signature; actual time wins for delay.
-    expect(onTime).toMatchObject({ to: ['UNKNOWN'], delayMinutes: 0, canceled: false });
+    expect(onTime).toMatchObject({ to: ['UNKNOWN'], delayMinutes: 0, delayBasis: 'actual', canceled: false });
+  });
+
+  it.each([
+    ['a preliminary estimate', { EstimatedTimeIsPreliminary: true }, 'preliminary', 4],
+    ['a firm estimate', { EstimatedTimeIsPreliminary: false }, 'estimated', 4],
+    [
+      'an actual time, even when the estimate was preliminary',
+      { EstimatedTimeIsPreliminary: true, TimeAtLocation: '2026-10-25T17:32:00.000+01:00' },
+      'actual',
+      2,
+    ],
+    ['no estimated or actual time', { EstimatedTimeAtLocation: undefined }, 'none', null],
+    ['no advertised time', { AdvertisedTimeAtLocation: undefined }, 'none', null],
+  ])('labels the delay basis for %s', async (_label, overrides, delayBasis, delayMinutes) => {
+    const announcement = {
+      AdvertisedTimeAtLocation: '2026-10-25T17:30:00.000+01:00',
+      EstimatedTimeAtLocation: '2026-10-25T17:34:00.000+01:00',
+      ...overrides,
+    };
+    mockTrafikinfo({ TrainStation: stationsFixture, TrainAnnouncement: [announcement] });
+
+    const result = await getTrainAnnouncementsTool(getTrainAnnouncementsSchema.parse({ station: 'Cst' }));
+
+    expect(result.announcements[0]).toMatchObject({ delayBasis, delayMinutes });
   });
 
   it('uses the arrivals activity type when asked', async () => {
@@ -153,6 +193,9 @@ describe('getTrainMessagesTool', () => {
       fromLocations: ['Borås C'],
       toLocations: ['Varberg'],
     });
+    // The shown message has its own timestamp, here older than the event's.
+    expect(message?.messageLastUpdated).toBe('2026-10-25T16:22:22.192+01:00');
+    expect(message?.lastUpdated).toBe('2026-10-25T17:07:54.873+01:00');
     // The most recently modified public message wins, with trailing whitespace trimmed.
     expect(message?.description).toMatch(/Se respektive tågavgång för mer information om din resa.$/);
     expect(message?.affectedLocations).toContain('Borås C');
@@ -236,6 +279,9 @@ describe('getRoadSituationsTool', () => {
     });
     expect(result.situations[0].distanceKm).toBeGreaterThan(10);
     expect(result.situations[0].distanceKm).toBeLessThan(13);
+    expect(result.situations[0].lastUpdated).toBe('2026-10-25T15:58:00.000+01:00');
+    // No fallback to the situation's timestamps when the deviation has no VersionTime.
+    expect(result.situations[1].lastUpdated).toBeUndefined();
   });
 
   it('filters by county both in the query and on the deviations', async () => {
@@ -266,6 +312,10 @@ describe('getRoadSituationsTool', () => {
 });
 
 describe('getRoadWeatherTool', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('returns the newest observation per station, nearest first', async () => {
     const requests = mockTrafikinfo({ WeatherObservation: weatherFixture });
 
@@ -297,6 +347,18 @@ describe('getRoadWeatherTool', () => {
       last10min: { rain: true, snow: false, precipitationMm: 0.4, windAverageMs: 6.1, windMaxMs: 9.3 },
     });
     expect(result.stations[0].distanceKm).toBeLessThan(result.stations[1].distanceKm as number);
+  });
+
+  it('reports the age of each sample when it was fetched', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-25T18:50:00.000+01:00'));
+    mockTrafikinfo({ WeatherObservation: [...weatherFixture, { Measurepoint: { Id: 303, Name: 'Utan tid' } }] });
+
+    const result = await getRoadWeatherTool(
+      getRoadWeatherSchema.parse({ latitude: 57.5, longitude: 12.1, limit: 5 })
+    );
+
+    expect(result.stations.map((s) => s.ageMinutes)).toEqual([110, 110, undefined]);
   });
 
   it('respects the station limit', async () => {
@@ -558,6 +620,67 @@ describe('getRailwayEventsTool', () => {
 
   it('rejects unknown status values', () => {
     expect(() => getRailwayEventsSchema.parse({ status: 'Okänd' })).toThrow();
+  });
+});
+
+describe('fetchedAt', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('is what train position ages are measured from', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-11-02T22:10:00.000+01:00'));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        // The response takes two minutes to arrive.
+        vi.setSystemTime(new Date('2026-11-02T22:12:00.000+01:00'));
+        const result = { TrainPosition: [{ TimeStamp: '2026-11-02T22:10:00.000+01:00' }] };
+        return new Response(JSON.stringify({ RESPONSE: { RESULT: [result] } }), { status: 200 });
+      })
+    );
+
+    const result = await getTrainPositionsTool(getTrainPositionsSchema.parse({ trainNumber: '421' }));
+
+    expect(result.trains[0].ageMinutes).toBe(2);
+  });
+
+  const point = { latitude: 57.5, longitude: 12.1 };
+
+  it.each([
+    ['TrainAnnouncement', () => getTrainAnnouncementsTool(getTrainAnnouncementsSchema.parse({ station: 'Cst' }))],
+    ['OperativeEvent', () => getTrainMessagesTool(getTrainMessagesSchema.parse({}))],
+    ['TrainPosition', () => getTrainPositionsTool(getTrainPositionsSchema.parse({ trainNumber: '421' }))],
+    ['RailwayEvent', () => getRailwayEventsTool(getRailwayEventsSchema.parse({}))],
+    ['ReplacementTraffic', () => getReplacementTrafficTool(getReplacementTrafficSchema.parse({}))],
+    ['Situation', () => getRoadSituationsTool(getRoadSituationsSchema.parse({}))],
+    ['WeatherObservation', () => getRoadWeatherTool(getRoadWeatherSchema.parse(point))],
+  ])('is when the %s response arrived', async (objectType, run) => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-11-02T20:00:00.000Z'));
+    // The station name lookup takes until 20:00:09, even when the station list is already cached.
+    const lookup = vi.mocked(stationNameMap);
+    const realLookup = lookup.getMockImplementation()!;
+    lookup.mockImplementation(async () => {
+      vi.setSystemTime(new Date('2026-11-02T20:00:09.000Z'));
+      return new Map();
+    });
+    onTestFinished(() => {
+      lookup.mockImplementation(realLookup);
+    });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (_url: unknown, init?: { body?: unknown }) => {
+        const isMainQuery = String(init?.body).includes(`objecttype="${objectType}"`);
+        // The main response arrives at 20:00:05; the lookup made afterwards must not move fetchedAt.
+        if (isMainQuery) vi.setSystemTime(new Date('2026-11-02T20:00:05.000Z'));
+        const result = isMainQuery ? { [objectType]: [] } : { TrainStation: stationsFixture };
+        return new Response(JSON.stringify({ RESPONSE: { RESULT: [result] } }), { status: 200 });
+      })
+    );
+
+    await expect(run()).resolves.toMatchObject({ fetchedAt: '2026-11-02T20:00:05.000Z' });
   });
 });
 

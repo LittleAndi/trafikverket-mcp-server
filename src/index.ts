@@ -33,6 +33,14 @@ const COVERAGE_NOTE = 'Coverage: Sweden only (Trafikverket data).';
 const ERROR_NOTE =
   'Returns an error result (isError: true) if TRAFIKVERKET_API_KEY is missing/invalid or the Trafikverket API is unreachable.';
 
+const FRESHNESS_NOTE =
+  'fetchedAt is when this server got the response from Trafikverket; the result does not refresh afterwards, ' +
+  'so call the tool again if fetchedAt is old.';
+
+const LAST_UPDATED_NOTE =
+  'lastUpdated is when Trafikverket last changed the record: an old value does not necessarily mean stale ' +
+  'data, and it does not confirm that the data is still current.';
+
 const READONLY_ANNOTATIONS = {
   readOnlyHint: true,
   destructiveHint: false,
@@ -102,7 +110,10 @@ server.registerTool(
       `a location signature; an ambiguous name returns an error listing the candidates. Covers a window from ` +
       `minutesBack before now to hoursAhead after now. Use get_train_messages for broader disruption ` +
       `notices (track work, faults) instead of per-train data. Times are ISO 8601, delays in minutes ` +
-      `(positive = late). ${ERROR_NOTE} ${COVERAGE_NOTE}`,
+      `(positive = late). delayBasis says what delayMinutes is based on: "actual", "estimated" or ` +
+      `"preliminary" (a preliminary estimate); "none" comes with delayMinutes null and means the delay is ` +
+      `unknown, not that the train is on time. ${FRESHNESS_NOTE} ${LAST_UPDATED_NOTE} ` +
+      `${ERROR_NOTE} ${COVERAGE_NOTE}`,
     inputSchema: getTrainAnnouncementsSchema,
     annotations: {
       title: 'Get Train Departures/Arrivals',
@@ -120,6 +131,8 @@ server.registerTool(
       `disruptions, with event type, header, description, start/expected end time, and the affected ` +
       `stations/sections. Optionally filter by county. Use this for "is there a disruption on the railway" ` +
       `questions; use get_train_announcements for per-train timetable and delay data. ` +
+      `messageLastUpdated is when the public message shown (header and description) last changed; it can be ` +
+      `older than the event's lastUpdated. ${FRESHNESS_NOTE} ${LAST_UPDATED_NOTE} ` +
       `${ERROR_NOTE} ${COVERAGE_NOTE}`,
     inputSchema: getTrainMessagesSchema,
     annotations: {
@@ -141,6 +154,7 @@ server.registerTool(
       `(from/via/to and intermediate stations) and, when it has one, the id of the related operative event ` +
       `(the eventId returned by get_train_messages). Filter by station (name or signature), status or ` +
       `operative event id. Use get_train_messages for the public disruption text instead. ` +
+      `${FRESHNESS_NOTE} ${LAST_UPDATED_NOTE} ` +
       `${ERROR_NOTE} ${COVERAGE_NOTE}`,
     inputSchema: getRailwayEventsSchema,
     annotations: {
@@ -159,6 +173,7 @@ server.registerTool(
       `when the position was reported. Locate one train by its train number, list trains within a radius of ` +
       `a point (latitude, longitude, radiusKm), or both. Only positions reported within the last ` +
       `maxAgeMinutes are returned. Use get_train_announcements for timetable and delay data at a station. ` +
+      `${FRESHNESS_NOTE} ageMinutes is each position's age at fetchedAt. ` +
       `${ERROR_NOTE} ${COVERAGE_NOTE}`,
     inputSchema: getTrainPositionsSchema,
     annotations: {
@@ -181,6 +196,7 @@ server.registerTool(
       `replaced train's departure date; otherwise trips from minutesBack before now to hoursAhead after now. ` +
       `Operators report this voluntarily, so not every replacement is listed: use get_train_announcements to ` +
       `see which trains are cancelled and get_train_messages for the disruption behind them. ` +
+      `${FRESHNESS_NOTE} ${LAST_UPDATED_NOTE} ` +
       `${ERROR_NOTE} ${COVERAGE_NOTE}`,
     inputSchema: getReplacementTrafficSchema,
     annotations: {
@@ -200,7 +216,7 @@ server.registerTool(
       `number, location, start/end time and coordinates. Filter by county and/or by a point plus radius ` +
       `(latitude, longitude, radiusKm); results are ordered by severity, then distance. Message types are ` +
       `Swedish, e.g. "Olycka" (accident) and "Vägarbete" (road work). Use get_road_weather for measured road ` +
-      `conditions instead. ${ERROR_NOTE} ${COVERAGE_NOTE}`,
+      `conditions instead. ${FRESHNESS_NOTE} ${LAST_UPDATED_NOTE} ${ERROR_NOTE} ${COVERAGE_NOTE}`,
     inputSchema: getRoadSituationsSchema,
     annotations: {
       title: 'Get Road Incidents',
@@ -218,7 +234,8 @@ server.registerTool(
       `(°C), humidity (%), dew point (°C), visibility (m), wind speed (m/s) and direction (degrees), road ` +
       `surface temperature (°C), grip, ice/snow/water on the road, and precipitation and wind over the last 10 ` +
       `minutes. These are actual observations, not a forecast; use a forecast source such as SMHI for future ` +
-      `weather. ${ERROR_NOTE} ${COVERAGE_NOTE}`,
+      `weather. Samples can be up to 2 hours old, so check each station's ageMinutes (its age at fetchedAt). ` +
+      `${FRESHNESS_NOTE} ${ERROR_NOTE} ${COVERAGE_NOTE}`,
     inputSchema: getRoadWeatherSchema,
     annotations: {
       title: 'Get Road Weather Observations',

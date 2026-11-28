@@ -143,6 +143,12 @@ Input: { "latitude": 58.3912, "longitude": 13.8453 }
 
 ## API Reference
 
+### Data freshness
+
+Every traffic tool (all except `search_stations`, which uses the cached station list) returns `fetchedAt`: when the server got the response from Trafikverket. A result does not refresh afterwards, so an old `fetchedAt` means the tool should be called again.
+
+`lastUpdated`, where a tool has it, is when the record was last changed according to Trafikverket, and is left out when the API gives no value. An old `lastUpdated` does not necessarily mean the data is stale (the record may simply not have changed), and it does not confirm that the data is still current.
+
 ### search_stations
 
 Find train stations by name (diacritics and case are ignored) or location signature.
@@ -168,7 +174,9 @@ Live departures or arrivals at one station. Accepts a station name or a location
 | hoursAhead  | number | No       | 2            | 0.25-12, hours after now to include                         |
 | limit       | number | No       | 25           | 1-100                                                       |
 
-Returns per train: train number, operator, product, origin and destination names, track, advertised/estimated/actual time, `delayMinutes` (positive = late), `canceled`, deviation notes and other information.
+Returns per train: train number, operator, product, origin and destination names, track, advertised/estimated/actual time, `estimatedTimeIsPreliminary`, `delayMinutes` (positive = late), `delayBasis`, `canceled`, deviation notes, other information and `lastUpdated`.
+
+`delayBasis` says what the delay is computed from: `actual`, `estimated`, `preliminary` (a preliminary estimate) or `none`. With `none`, `delayMinutes` is `null`: the delay is unknown, which is not the same as on time.
 
 ### get_train_positions
 
@@ -185,7 +193,7 @@ Live GPS positions of trains. Give a train number, a point to search around, or 
 
 \* At least `trainNumber` or `latitude`/`longitude` is required.
 
-Returns per train (newest report only): train number, departure date, coordinates, `distanceKm` (radius searches, nearest first), `speedKmh`, `bearingDegrees` (direction of travel), `active`, report `timestamp` and `ageMinutes`.
+Returns per train (newest report only): train number, departure date, coordinates, `distanceKm` (radius searches, nearest first), `speedKmh`, `bearingDegrees` (direction of travel), `active`, report `timestamp` and `ageMinutes` (the position's age at `fetchedAt`).
 
 ### get_train_messages
 
@@ -197,7 +205,7 @@ Current railway traffic messages (Trafikverket operative events): track work, fa
 | activeOnly | boolean         | No       | true    | Only ongoing events                                      |
 | limit      | number          | No       | 20      | 1-100                                                    |
 
-Returns event type, header, description (when a public message has been published), start/end/expected end, and the affected stations and sections.
+Returns event type, header, description (when a public message has been published), start/end/expected end, the affected stations and sections, the event's `lastUpdated` and `messageLastUpdated` for the message shown (which can be older than the event's).
 
 ### get_replacement_traffic
 
@@ -212,7 +220,7 @@ Replacement traffic (ersättningstrafik) reported by the train operators: the bu
 | hoursAhead  | number | No       | 12      | 0.5-48, include trips departing up to this many hours after now                      |
 | limit       | number | No       | 20      | 1-50                                                                                 |
 
-Returns per trip: replaced trains (number, date, product), `vehicleMode` (`bus`, `coach`, `taxi`, ...), `status` (`planned`, `ordered`, `confirmed`, `running`, `finished`, `canceled`), vehicle identifier, `wheelchairAccessible`, `toilet`, origin/destination, departure/arrival time and every stop in order with stop description (where to board), coordinates, planned/expected/actual arrival and departure, `delayMinutes`, `disembarkingOnly`, traveller note and connecting stations. With `station`, the stop there is also returned as `atStation` and trips are ordered by the time at that stop.
+Returns per trip: replaced trains (number, date, product), `vehicleMode` (`bus`, `coach`, `taxi`, ...), `status` (`planned`, `ordered`, `confirmed`, `running`, `finished`, `canceled`), vehicle identifier, `wheelchairAccessible`, `toilet`, origin/destination, departure/arrival time and every stop in order with stop description (where to board), coordinates, planned/expected/actual arrival and departure, `delayMinutes`, `disembarkingOnly`, traveller note and connecting stations, plus `lastUpdated` per trip. With `station`, the stop there is also returned as `atStation` and trips are ordered by the time at that stop.
 
 ### get_railway_events
 
@@ -241,7 +249,7 @@ Current incidents on the state road network.
 | messageType | string          | No       | -       | Swedish message type as used by Trafikverket, e.g. `"Olycka"`, `"Vägarbete"`       |
 | limit       | number          | No       | 25      | 1-100                                                                              |
 
-Results are ordered by severity (code 1-5, higher is more severe), then distance. Each entry has message, type, severity, road number and name, location, start/end time, restrictions and coordinates.
+Results are ordered by severity (code 1-5, higher is more severe), then distance. Each entry has message, type, severity, road number and name, location, start/end time, restrictions, coordinates and `lastUpdated`.
 
 ### get_road_weather
 
@@ -254,7 +262,7 @@ Observations from the nearest roadside weather stations (not a forecast).
 | radiusKm  | number | No       | 25      | 1-100                                  |
 | limit     | number | No       | 3       | 1-20 nearest stations                  |
 
-Returns per station: name, distance, sample time, air temperature (°C), humidity (%), dew point (°C), visibility (m), wind (m/s, degrees), road surface temperature (°C), grip, ice/snow/water flags, and precipitation and wind over the last 10 minutes.
+Returns per station: name, distance, sample time, `ageMinutes` (the sample's age at `fetchedAt`; samples can be up to 2 hours old), air temperature (°C), humidity (%), dew point (°C), visibility (m), wind (m/s, degrees), road surface temperature (°C), grip, ice/snow/water flags, and precipitation and wind over the last 10 minutes.
 
 ## Development
 
